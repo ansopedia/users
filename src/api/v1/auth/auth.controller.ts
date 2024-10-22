@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 
 import { STATUS_CODES, envConstants } from "@/constants";
 import { GoogleUser } from "@/types/passport-google";
-import { sendResponse } from "@/utils";
+import { isValidRedirectUrl, sendResponse } from "@/utils";
 
 import { success } from "./auth.constant";
 import { AuthService } from "./auth.service";
@@ -64,11 +64,18 @@ export class AuthController {
         maxAge: 60000, // 1 minute
       });
 
-      // Instead of sending a JSON response, redirect to the client's URL
+      // Validate and sanitize the redirect URL
       const state = req.query.state as string;
-      const redirectUrl = Buffer.from(state, "base64").toString("utf-8");
+      let redirectUrl = `${envConstants.CLIENT_URL}/profile?success=true`; // Default redirect URL
 
-      res.redirect(redirectUrl ?? `${envConstants.CLIENT_URL}/login?success=true`);
+      if (state) {
+        const decodedUrl = Buffer.from(state, "base64").toString("utf-8");
+        if (isValidRedirectUrl(decodedUrl)) {
+          redirectUrl = decodedUrl;
+        }
+      }
+
+      res.redirect(redirectUrl);
     } catch (error) {
       next(error);
     }
