@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 
 import { STATUS_CODES, envConstants } from "@/constants";
 import { GoogleUser } from "@/types/passport-google";
-import { sendResponse } from "@/utils";
+import { isValidRedirectUrl, sendResponse } from "@/utils";
 
 import { success } from "./auth.constant";
 import { AuthService } from "./auth.service";
@@ -58,14 +58,24 @@ export class AuthController {
 
       // TODO: used action token instead of access token
       res.cookie("access-token", accessToken, {
-        httpOnly: false,
+        httpOnly: true,
         secure: true,
         sameSite: "strict",
         maxAge: 60000, // 1 minute
       });
 
-      // Instead of sending a JSON response, redirect to the client's URL
-      res.redirect(`${envConstants.CLIENT_URL}/login?success=true`);
+      // Validate and sanitize the redirect URL
+      const state = req.query.state as string;
+      let redirectUrl = `${envConstants.CLIENT_URL}/profile?success=true`; // Default redirect URL
+
+      if (state) {
+        const decodedUrl = Buffer.from(state, "base64").toString("utf-8");
+        if (isValidRedirectUrl(decodedUrl)) {
+          redirectUrl = decodedUrl;
+        }
+      }
+
+      res.redirect(redirectUrl);
     } catch (error) {
       next(error);
     }
