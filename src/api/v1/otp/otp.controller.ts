@@ -37,7 +37,7 @@ export class OtpController {
         response: res,
         message: message,
         statusCode: STATUS_CODES.OK,
-        payload: { token },
+        data: { token },
       });
     } catch (error) {
       next(error);

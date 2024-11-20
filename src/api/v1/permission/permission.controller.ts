@@ -12,7 +12,7 @@ export const createPermission = async (req: Request, res: Response, next: NextFu
     sendResponse({
       response: res,
       message: success.PERMISSION_CREATED_SUCCESSFULLY,
-      payload: {
+      data: {
         permission: createdPermission,
       },
       statusCode: STATUS_CODES.CREATED,
@@ -28,7 +28,7 @@ export const getPermissions = async (_: Request, res: Response, next: NextFuncti
     sendResponse({
       response: res,
       message: success.PERMISSION_FETCHED_SUCCESSFULLY,
-      payload: {
+      data: {
         permissions,
       },
       statusCode: STATUS_CODES.OK,

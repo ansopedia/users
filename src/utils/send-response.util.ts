@@ -1,4 +1,5 @@
 import { Response, request } from "express";
+import { ZodIssue } from "zod";
 
 import { envConstants } from "@/constants";
 
@@ -6,17 +7,20 @@ import { errorLogger } from "./logger";
 
 export interface SendResponse<T = undefined> {
   response: Response;
+  code?: string;
   statusCode: number;
   status?: "success" | "failed";
   message: string;
   errorDetails?: Error;
-  payload?: T;
+  data?: T;
+  errors?: ZodIssue[];
 }
 
-export const sendResponse = <T>(data: SendResponse<T>) => {
-  const { response, statusCode, message, errorDetails, payload, status = "success" } = data;
+export const sendResponse = <T>(responseData: SendResponse<T>) => {
+  const { response, statusCode, message, errorDetails, status = "success", data, errors, code } = responseData;
   const isProduction = envConstants.NODE_ENV === "production";
-  const responseBody: Record<string, unknown> = { message };
+
+  const responseBody: Record<string, unknown> = { status, message, data, code, errors };
 
   if (!isProduction && errorDetails) {
     responseBody.errorDetails = {
@@ -25,13 +29,11 @@ export const sendResponse = <T>(data: SendResponse<T>) => {
     };
   }
 
-  Object.assign(responseBody, payload);
-
   if (errorDetails && statusCode >= 500) {
     errorLogger.error(
       `Error occurred in ${request.url}: ${errorDetails.name} ${errorDetails.message} ${errorDetails.stack}`
     );
   }
 
-  response.status(statusCode).json({ ...responseBody, status });
+  response.status(statusCode).json(responseBody);
 };

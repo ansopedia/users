@@ -21,7 +21,7 @@ if (NODE_ENV !== "test") {
   app.use(helmet());
 
   // Apply CORS middleware with a whitelist (adjust origins as needed)
-  const allowedOrigins = ["http://localhost:3000"];
+  const allowedOrigins = ["http://localhost:3000", "http://192.168.1.233:3000"];
   const allowedPathsWithoutOrigin = ["/api/v1/auth/google/callback", "/api/v1/auth/google"];
 
   const corsOptions = {

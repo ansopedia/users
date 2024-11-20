@@ -19,19 +19,19 @@ export const tokenSecrets = {
   action: JWT_TOKEN_FOR_ACTION_SECRET,
 };
 
-export const generateAccessToken = (payload: JwtAccessToken) => {
-  const validPayload = jwtAccessTokenSchema.parse(payload);
-  return jwt.sign(validPayload, JWT_ACCESS_SECRET, { expiresIn: "1h" });
+export const generateAccessToken = (data: JwtAccessToken) => {
+  const validdata = jwtAccessTokenSchema.parse(data);
+  return jwt.sign(validdata, JWT_ACCESS_SECRET, { expiresIn: "1h" });
 };
 
-export const generateRefreshToken = (payload: JwtRefreshToken) => {
-  const validPayload = jwtRefreshTokenSchema.parse(payload);
-  return jwt.sign(validPayload, JWT_REFRESH_SECRET, { expiresIn: "7d" });
+export const generateRefreshToken = (data: JwtRefreshToken) => {
+  const validdata = jwtRefreshTokenSchema.parse(data);
+  return jwt.sign(validdata, JWT_REFRESH_SECRET, { expiresIn: "7d" });
 };
 
-export const generateTokenForAction = (payload: JwtActionToken) => {
-  const validPayload = jwtActionTokenSchema.parse(payload);
-  return jwt.sign(validPayload, JWT_TOKEN_FOR_ACTION_SECRET, {
+export const generateTokenForAction = (data: JwtActionToken) => {
+  const validdata = jwtActionTokenSchema.parse(data);
+  return jwt.sign(validdata, JWT_TOKEN_FOR_ACTION_SECRET, {
     expiresIn: "5m",
   });
 };

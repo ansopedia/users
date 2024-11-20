@@ -24,7 +24,7 @@ describe("User Role Test", () => {
   beforeAll(async () => {
     const loginResponse = await login(defaultUsers);
     expectLoginSuccess(loginResponse);
-    loggedInUserId = loginResponse.body.userId;
+    loggedInUserId = loginResponse.body.data.userId;
     authorizationHeader = `Bearer ${loginResponse.header["authorization"]}`;
   });
 
@@ -33,7 +33,7 @@ describe("User Role Test", () => {
     expectCreateRoleSuccess(response, VALID_ROLE);
 
     const userRole = {
-      roleId: response.body.role.id,
+      roleId: response.body.data.role.id,
       userId: loggedInUserId,
     };
 

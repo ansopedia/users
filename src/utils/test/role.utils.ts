@@ -18,10 +18,12 @@ export const expectCreateRoleSuccess = (response: Response, { name, description 
 
   expect(body).toMatchObject({
     message: success.ROLE_CREATED_SUCCESSFULLY,
-    role: {
-      id: expect.any(String),
-      name,
-      description,
+    data: {
+      role: {
+        id: expect.any(String),
+        name,
+        description,
+      },
     },
   });
 };
@@ -38,6 +40,8 @@ export const expectGetRolesSuccess = (response: Response): void => {
   expect(statusCode).toBe(STATUS_CODES.OK);
   expect(body).toMatchObject({
     message: success.ROLES_FETCHED_SUCCESSFULLY,
-    roles: expect.any(Array),
+    data: {
+      roles: expect.any(Array),
+    },
   });
 };

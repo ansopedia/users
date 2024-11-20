@@ -15,7 +15,7 @@ export class ProfileController {
       sendResponse({
         response: res,
         message: success.PROFILE_UPDATED_SUCCESSFULLY,
-        payload: profile,
+        data: profile,
         statusCode: 200,
       });
     } catch (error) {

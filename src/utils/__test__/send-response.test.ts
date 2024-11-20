@@ -3,7 +3,7 @@ import { Response } from "express";
 import { SendResponse, sendResponse } from "@/utils";
 
 describe("sendResponse", () => {
-  it("should return a successful response with the correct payload", () => {
+  it("should return a successful response with the correct data", () => {
     const mockResponse: Response = {
       status: jest.fn().mockReturnThis(),
       json: jest.fn(),
@@ -13,7 +13,7 @@ describe("sendResponse", () => {
       response: mockResponse,
       statusCode: 200,
       message: "Success!",
-      payload: { someData: "Hello, World!" },
+      data: { someData: "Hello, World!" },
     };
 
     sendResponse(mockData);
@@ -21,7 +21,7 @@ describe("sendResponse", () => {
     expect(mockResponse.status).toHaveBeenCalledWith(200);
     expect(mockResponse.json).toHaveBeenCalledWith({
       message: "Success!",
-      someData: "Hello, World!",
+      data: { someData: "Hello, World!" },
       status: "success",
     });
   });

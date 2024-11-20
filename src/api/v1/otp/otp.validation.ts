@@ -55,7 +55,7 @@ const validateOtpEvent = (data: BaseSchema) => {
 };
 
 export const otpEvent = baseSchema.refine(validateOtpEvent, {
-  message: "Invalid payload for the given optType",
+  message: "Invalid data for the given optType",
   path: ["optType"],
 });
 
@@ -64,7 +64,7 @@ export const otpVerifyEvent = baseSchema
     otp,
   })
   .refine(validateOtpEvent, {
-    message: "Invalid payload for the given optType",
+    message: "Invalid data for the given optType",
     path: ["optType"],
   });
 

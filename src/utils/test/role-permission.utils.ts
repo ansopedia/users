@@ -21,9 +21,11 @@ export const expectCreateRolePermissionSuccess = (response: Response, rolePermis
 
   expect(body).toMatchObject({
     message: success.ROLE_PERMISSION_CREATED_SUCCESSFULLY,
-    rolePermission: {
-      roleId: rolePermission.roleId,
-      permissionId: rolePermission.permissionId,
+    data: {
+      rolePermission: {
+        roleId: rolePermission.roleId,
+        permissionId: rolePermission.permissionId,
+      },
     },
   });
 };
