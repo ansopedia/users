@@ -12,7 +12,7 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
     sendResponse({
       response: res,
       message: success.USER_CREATED_SUCCESSFULLY,
-      payload: {
+      data: {
         user,
       },
       statusCode: STATUS_CODES.CREATED,
@@ -28,7 +28,7 @@ export const getAllUsers = async (_: Request, res: Response, next: NextFunction)
     sendResponse({
       response: res,
       message: success.USER_FETCHED_SUCCESSFULLY,
-      payload: {
+      data: {
         users,
       },
       statusCode: STATUS_CODES.OK,
@@ -44,7 +44,7 @@ export const getUserByUsername = async (req: Request, res: Response, next: NextF
     sendResponse({
       response: res,
       message: success.USER_FETCHED_SUCCESSFULLY,
-      payload: {
+      data: {
         user,
       },
       statusCode: STATUS_CODES.OK,
@@ -60,7 +60,7 @@ export const softDeleteUser = async (req: Request, res: Response, next: NextFunc
     sendResponse({
       response: res,
       message: success.USER_DELETED_SUCCESSFULLY,
-      payload: {
+      data: {
         user,
       },
       statusCode: STATUS_CODES.OK,
@@ -76,7 +76,7 @@ export const restoreUser = async (req: Request, res: Response, next: NextFunctio
     sendResponse({
       response: res,
       message: success.USER_RESTORED_SUCCESSFULLY,
-      payload: {
+      data: {
         user,
       },
       statusCode: STATUS_CODES.OK,

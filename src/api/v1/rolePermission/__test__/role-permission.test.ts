@@ -44,8 +44,8 @@ describe("Role Permission Test", () => {
     expectCreatePermissionSuccess(permissionRes, VALID_PERMISSION);
 
     const rolePermission = {
-      roleId: roleResponse.body.role.id,
-      permissionId: permissionRes.body.permission.id,
+      roleId: roleResponse.body.data.role.id,
+      permissionId: permissionRes.body.data.permission.id,
     };
 
     const response = await createRolePermissionRequest(rolePermission, authorizationHeader);

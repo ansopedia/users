@@ -29,12 +29,12 @@ export const emailValidator = z
 
 export const otpValidator = z.string().length(6, "OTP must be exactly 6 characters");
 
-//  Specific payload schemas
-const emailVerificationOTPPayload = z.object({
+//  Specific data schemas
+const emailVerificationOTPdata = z.object({
   otp: otpValidator,
 });
 
-const passwordResetOTPPayload = z.object({
+const passwordResetOTPdata = z.object({
   otp: otpValidator,
 });
 
@@ -44,20 +44,20 @@ const emailNotification = z.discriminatedUnion("eventType", [
     to: emailValidator,
     eventType: z.literal("sendEmailVerificationOTP"),
     subject: z.string().optional(),
-    payload: emailVerificationOTPPayload,
+    data: emailVerificationOTPdata,
   }),
   z.object({
     to: emailValidator,
     eventType: z.literal("sendForgetPasswordOTP"),
     subject: z.string().optional(),
-    payload: passwordResetOTPPayload,
+    data: passwordResetOTPdata,
   }),
   z.object({
     to: emailValidator,
     eventType: z.literal("sendPasswordChangeConfirmation"),
     subject: z.string().optional(),
   }),
-  // ... Add other event types and their corresponding payloads ...
+  // ... Add other event types and their corresponding datas ...
 ]);
 
 export const validateEmailNotification = (data: EmailNotification) => {
@@ -67,7 +67,7 @@ export const validateEmailNotification = (data: EmailNotification) => {
     if (error instanceof z.ZodError) {
       // Customize error messages
       const customErrors = error.issues.map((issue) => {
-        if (issue.code === "invalid_type" && issue.path.includes("payload")) {
+        if (issue.code === "invalid_type" && issue.path.includes("data")) {
           const fieldName = issue.path[issue.path.length - 1];
           return {
             ...issue,

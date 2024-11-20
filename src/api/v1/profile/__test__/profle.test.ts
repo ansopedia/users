@@ -25,7 +25,7 @@ describe("Profile Service", () => {
   beforeAll(async () => {
     const loginResponse = await login(defaultUsers);
     expectLoginSuccess(loginResponse);
-    loggedInUserId = loginResponse.body.userId;
+    loggedInUserId = loginResponse.body.data.userId;
     authorizationHeader = `Bearer ${loginResponse.header["authorization"]}`;
   });
 

@@ -12,7 +12,7 @@ export const createRole = async (req: Request, res: Response, next: NextFunction
     sendResponse({
       response: res,
       message: success.ROLE_CREATED_SUCCESSFULLY,
-      payload: {
+      data: {
         role,
       },
       statusCode: STATUS_CODES.CREATED,
@@ -28,7 +28,7 @@ export const getRoles = async (_: Request, res: Response, next: NextFunction) =>
     sendResponse({
       response: res,
       message: success.ROLES_FETCHED_SUCCESSFULLY,
-      payload: {
+      data: {
         roles,
       },
       statusCode: STATUS_CODES.OK,

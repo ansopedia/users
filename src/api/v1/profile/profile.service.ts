@@ -9,8 +9,8 @@ export class ProfileService {
     this.profileDataDal = new ProfileDataDAL();
   }
 
-  upSertProfileData = async (payload: ProfileData) => {
-    const profileData = validateProfileSchema(payload);
+  upSertProfileData = async (data: ProfileData) => {
+    const profileData = validateProfileSchema(data);
 
     const updateProfileData = await this.profileDataDal.upSertProfileData(profileData);
     return ProfileDto(updateProfileData).getProfile();

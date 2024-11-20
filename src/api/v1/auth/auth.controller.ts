@@ -42,7 +42,7 @@ export class AuthController {
         response: res,
         message: success.LOGGED_IN_SUCCESSFULLY,
         statusCode: STATUS_CODES.OK,
-        payload: { userId },
+        data: { userId },
       });
     } catch (error) {
       next(error);

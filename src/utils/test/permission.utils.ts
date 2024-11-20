@@ -16,11 +16,13 @@ export const expectCreatePermissionSuccess = (response: Response, permission: cr
 
   expect(body).toMatchObject({
     message: success.PERMISSION_CREATED_SUCCESSFULLY,
-    permission: {
-      id: expect.any(String),
-      name: permission.name,
-      description: permission.description,
-      category: permission.category,
+    data: {
+      permission: {
+        id: expect.any(String),
+        name: permission.name,
+        description: permission.description,
+        category: permission.category,
+      },
     },
   });
 };
@@ -37,6 +39,8 @@ export const expectGetPermissionsSuccess = (response: Response): void => {
   expect(statusCode).toBe(STATUS_CODES.OK);
   expect(body).toMatchObject({
     message: success.PERMISSION_FETCHED_SUCCESSFULLY,
-    permissions: expect.any(Array),
+    data: {
+      permissions: expect.any(Array),
+    },
   });
 };

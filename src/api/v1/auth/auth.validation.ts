@@ -36,7 +36,7 @@ export const jwtActionTokenSchema = z.object({
 });
 
 export const sendOtpSchema = z.object({
-  payload: userSchema.shape.email,
+  data: userSchema.shape.email,
   eventType: z.enum(["signUp", "resetPassword", "sendEmailVerificationOTP"]),
 });
 

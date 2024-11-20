@@ -8,7 +8,7 @@ jest.mock("jsonwebtoken", () => ({
 }));
 
 describe("Jwt token", () => {
-  const mockPayload: JwtAccessToken = {
+  const mockdata: JwtAccessToken = {
     userId: "123",
   };
 
@@ -17,7 +17,7 @@ describe("Jwt token", () => {
   });
 
   it("should generate an access token", () => {
-    const token = generateAccessToken(mockPayload);
+    const token = generateAccessToken(mockdata);
     expect(token).toBeDefined();
   });
 

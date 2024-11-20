@@ -104,12 +104,14 @@ describe("User Test", () => {
 
     expect(body).toMatchObject({
       message: success.USER_FETCHED_SUCCESSFULLY,
-      users: expect.any(Array),
+      data: {
+        users: expect.any(Array),
+      },
     });
 
-    if (body.users.length > 0) {
-      expect(body.users[0]).not.toHaveProperty("password");
-      expect(body.users[0]).not.toHaveProperty("confirmPassword");
+    if (body.data.users.length > 0) {
+      expect(body.data.users[0]).not.toHaveProperty("password");
+      expect(body.data.users[0]).not.toHaveProperty("confirmPassword");
     }
   });
 });

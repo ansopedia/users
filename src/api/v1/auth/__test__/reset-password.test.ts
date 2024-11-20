@@ -74,7 +74,7 @@ describe("Reset Password", () => {
 
       const userResponse = await findUserByUsername(user.username);
       expectFindUserByUsernameSuccess(userResponse, user);
-      const userDetails: GetUser = userResponse.body.user;
+      const userDetails: GetUser = userResponse.body.data.user;
 
       const otpData = await retrieveOTP(userDetails.id, "sendForgetPasswordOTP");
       verifiedOTPResponse = await verifyOTP(otpData, user.email);
@@ -82,7 +82,7 @@ describe("Reset Password", () => {
     });
 
     it("should reset password successfully", async () => {
-      const { token } = verifiedOTPResponse.body;
+      const { token } = verifiedOTPResponse.body.data;
 
       const res = await resetPassword({
         token,
