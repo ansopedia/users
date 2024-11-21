@@ -111,6 +111,7 @@ export class AuthService {
     notificationService.sendEmail({
       to: user.email,
       eventType: "sendPasswordChangeConfirmation",
+      payload: { recipientName: user.username },
     });
   }
 

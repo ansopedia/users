@@ -71,7 +71,7 @@ export const expectLogoutSuccess = (response: Response) => {
 };
 
 export const renewToken = async (refreshToken: string) => {
-  return await supertest(app).post("/api/v1/auth/renew-token").set("authorization", refreshToken);
+  return await supertest(app).post("/api/v1/auth/refresh-token").set("authorization", refreshToken);
 };
 
 export const expectRenewTokenSuccess = (response: Response) => {
