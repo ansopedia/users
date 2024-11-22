@@ -28,7 +28,7 @@ export class OtpService {
       notificationService.sendEmail({
         to: user.email,
         eventType: otpType,
-        data: { otp },
+        payload: { otp, recipientName: user.username },
       });
     }
 
@@ -41,7 +41,7 @@ export class OtpService {
       notificationService.sendEmail({
         to: user.email,
         eventType: otpType,
-        data: { otp },
+        payload: { otp },
       });
     }
 

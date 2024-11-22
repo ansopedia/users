@@ -16,7 +16,7 @@ export class TokenService {
   async createActionToken(userId: string, action: TokenAction) {
     const token = generateTokenForAction({ userId, action });
 
-    const tokendata: CreateToken = {
+    const tokenPayload: CreateToken = {
       userId,
       action,
       token,
@@ -24,7 +24,7 @@ export class TokenService {
       expiryTime: new Date(Date.now() + FIVE_MINUTES_IN_MS),
     };
 
-    await this.tokenDAL.replaceTokenForUser(tokendata);
+    await this.tokenDAL.replaceTokenForUser(tokenPayload);
     return token;
   }
 

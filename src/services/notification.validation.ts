@@ -4,7 +4,7 @@ import { z } from "zod";
 //   'sendEmailVerificationOTP',
 //   'sendEmailVerificationMagicLink',
 //   'sendEmailChangeConfirmation',
-//   'sendForgetPasswordOTP',
+//   'sendPasswordResetOTP',
 //   'sendAccountActivationEmail',
 //   'sendWelcomeEmail',
 //   'sendTwoFactorAuthCode',
@@ -29,13 +29,26 @@ export const emailValidator = z
 
 export const otpValidator = z.string().length(6, "OTP must be exactly 6 characters");
 
-//  Specific data schemas
-const emailVerificationOTPdata = z.object({
+//  Specific payload schemas
+const emailVerificationOTPPayload = z.object({
+  otp: otpValidator,
+  recipientName: z.string().min(1, "Recipient name is required"),
+});
+
+const emailVerificationMagicLinkPayload = z.object({
+  magicLink: z.string().url(),
+});
+
+const emailChangeConfirmationPayload = z.object({
+  newEmail: emailValidator,
+});
+
+const passwordResetOTPPayload = z.object({
   otp: otpValidator,
 });
 
-const passwordResetOTPdata = z.object({
-  otp: otpValidator,
+const passwordChangeConfirmationPayload = z.object({
+  recipientName: z.string().min(1, "Recipient name is required"),
 });
 
 // Define the email notification schema
@@ -44,20 +57,33 @@ const emailNotification = z.discriminatedUnion("eventType", [
     to: emailValidator,
     eventType: z.literal("sendEmailVerificationOTP"),
     subject: z.string().optional(),
-    data: emailVerificationOTPdata,
+    payload: emailVerificationOTPPayload,
+  }),
+  z.object({
+    to: emailValidator,
+    eventType: z.literal("sendEmailVerificationMagicLink"),
+    payload: emailVerificationMagicLinkPayload,
+    subject: z.string().optional(),
+  }),
+  z.object({
+    to: emailValidator,
+    eventType: z.literal("sendEmailChangeConfirmation"),
+    payload: emailChangeConfirmationPayload,
+    subject: z.string().optional(),
   }),
   z.object({
     to: emailValidator,
     eventType: z.literal("sendForgetPasswordOTP"),
+    payload: passwordResetOTPPayload,
     subject: z.string().optional(),
-    data: passwordResetOTPdata,
   }),
   z.object({
     to: emailValidator,
     eventType: z.literal("sendPasswordChangeConfirmation"),
     subject: z.string().optional(),
+    payload: passwordChangeConfirmationPayload,
   }),
-  // ... Add other event types and their corresponding datas ...
+  // ... Add other event types and their corresponding payloads ...
 ]);
 
 export const validateEmailNotification = (data: EmailNotification) => {
@@ -67,7 +93,7 @@ export const validateEmailNotification = (data: EmailNotification) => {
     if (error instanceof z.ZodError) {
       // Customize error messages
       const customErrors = error.issues.map((issue) => {
-        if (issue.code === "invalid_type" && issue.path.includes("data")) {
+        if (issue.code === "invalid_type" && issue.path.includes("payload")) {
           const fieldName = issue.path[issue.path.length - 1];
           return {
             ...issue,
@@ -84,3 +110,4 @@ export const validateEmailNotification = (data: EmailNotification) => {
 };
 
 export type EmailNotification = z.infer<typeof emailNotification>;
+export type EmailVerificationOTPPayload = z.infer<typeof emailVerificationOTPPayload>;

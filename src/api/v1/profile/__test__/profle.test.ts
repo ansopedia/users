@@ -41,7 +41,7 @@ describe("Profile Service", () => {
     });
 
     it("should throw an error if invalid access token is provided", async () => {
-      const response = await upSertProfileData({}, "Bearer invalid-access-token");
+      const response = await upSertProfileData({}, "Bearer invalid-authorization");
       expectUnauthorizedResponseForInvalidToken(response);
     });
 

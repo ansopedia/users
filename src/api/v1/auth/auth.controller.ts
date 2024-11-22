@@ -57,7 +57,7 @@ export class AuthController {
       AuthController.setTokenCookies(res, accessToken, refreshToken);
 
       // TODO: used action token instead of access token
-      res.cookie("access-token", accessToken, {
+      res.cookie("authorization", accessToken, {
         httpOnly: true,
         secure: true,
         sameSite: "strict",

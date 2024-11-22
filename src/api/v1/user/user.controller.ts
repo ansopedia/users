@@ -45,7 +45,7 @@ export const getUserByUsername = async (req: Request, res: Response, next: NextF
       response: res,
       message: success.USER_FETCHED_SUCCESSFULLY,
       data: {
-        user,
+        ...user,
       },
       statusCode: STATUS_CODES.OK,
     });

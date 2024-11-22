@@ -71,7 +71,7 @@ export const expectLogoutSuccess = (response: Response) => {
 };
 
 export const renewToken = async (refreshToken: string) => {
-  return await supertest(app).post("/api/v1/auth/renew-token").set("authorization", refreshToken);
+  return await supertest(app).post("/api/v1/auth/refresh-token").set("authorization", refreshToken);
 };
 
 export const expectRenewTokenSuccess = (response: Response) => {
@@ -99,7 +99,7 @@ export const verifyAccount = async (user: CreateUser) => {
   expectFindUserByUsernameSuccess(userResponse, user);
 
   // Step 2: Retrieve OTP from database
-  const otpData = await retrieveOTP(userResponse.body.data.user.id, "sendEmailVerificationOTP");
+  const otpData = await retrieveOTP(userResponse.body.data.id, "sendEmailVerificationOTP");
 
   // Step 3: Verify OTP
   const verifyResponse = await verifyOTP(otpData, email);
