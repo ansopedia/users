@@ -74,7 +74,7 @@ describe("Reset Password", () => {
 
       const userResponse = await findUserByUsername(user.username);
       expectFindUserByUsernameSuccess(userResponse, user);
-      const userDetails: GetUser = userResponse.body.data.user;
+      const userDetails: GetUser = userResponse.body.data;
 
       const otpData = await retrieveOTP(userDetails.id, "sendForgetPasswordOTP");
       verifiedOTPResponse = await verifyOTP(otpData, user.email);

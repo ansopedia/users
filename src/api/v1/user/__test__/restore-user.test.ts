@@ -42,7 +42,7 @@ describe("Restore User", () => {
     const foundUserRes = await findUserByUsername(newUser.username);
     expectFindUserByUsernameSuccess(foundUserRes, newUser);
 
-    userToDelete = foundUserRes.body.data.user;
+    userToDelete = foundUserRes.body.data;
   });
 
   it("should return 401 for missing authorization header", async () => {

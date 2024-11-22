@@ -60,21 +60,21 @@ export const expectUserNotFoundError = (response: Response): void => {
 export const expectFindUserByUsernameSuccess = (response: Response, user: CreateUser): void => {
   expect(response).toBeDefined();
   const { statusCode, body } = response;
-
   expect(statusCode).toBe(STATUS_CODES.OK);
   expect(body).toMatchObject({
     message: success.USER_FETCHED_SUCCESSFULLY,
     data: {
-      user: {
-        id: expect.any(String),
-        email: user.email,
-        username: user.username,
-      },
+      id: expect.any(String),
+      email: user.email,
+      username: user.username,
+      isEmailVerified: expect.any(Boolean),
+      createdAt: expect.any(String),
+      updatedAt: expect.any(String),
     },
   });
 
-  expect(body.data.user).not.toHaveProperty("password");
-  expect(body.data.user).not.toHaveProperty("confirmPassword");
+  expect(body.data).not.toHaveProperty("password");
+  expect(body.data).not.toHaveProperty("confirmPassword");
 };
 
 export const deleteUser = async (userId: string, authorizationHeader: string): Promise<Response> => {
