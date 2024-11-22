@@ -38,6 +38,7 @@
     "passport-google-oauth20": "^2.0.0",
     "pino": "^9.3.2",
     "pino-http": "^10.2.0",
+    "socket.io": "^4.8.1",
     "zod": "^3.23.8"
   },
   "devDependencies": {
