@@ -1,4 +1,4 @@
-import { AuthModel } from "./auth.modal";
+import { AuthModel } from "./auth.model";
 import { Auth } from "./auth.validation";
 
 export class AuthDAL {

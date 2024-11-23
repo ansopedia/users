@@ -1,5 +1,5 @@
+import { ErrorTypeEnum } from "../../../constants";
 import { ProfileDataDAL } from "./profile.dal";
-import { ProfileDto } from "./profile.dto";
 import { ProfileData, validateProfileSchema } from "./profile.validation";
 
 export class ProfileService {
@@ -13,6 +13,17 @@ export class ProfileService {
     const profileData = validateProfileSchema(data);
 
     const updateProfileData = await this.profileDataDal.upSertProfileData(profileData);
-    return ProfileDto(updateProfileData).getProfile();
+    // return ProfileDto(updateProfileData).getProfile();
+    return updateProfileData;
+  };
+
+  getProfileData = async (userId: string) => {
+    const profileData = await this.profileDataDal.getProfileData(userId);
+
+    if (!profileData) {
+      throw new Error(ErrorTypeEnum.enum.RESOURCE_NOT_FOUND);
+    }
+
+    return profileData;
   };
 }
