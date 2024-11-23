@@ -61,7 +61,7 @@ export class AuthController {
         httpOnly: true,
         secure: true,
         sameSite: "strict",
-        maxAge: 60000, // 1 minute
+        maxAge: 1000 * 60 * 60, // 1hr
       });
 
       // Validate and sanitize the redirect URL
