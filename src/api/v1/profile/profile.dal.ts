@@ -1,8 +1,9 @@
-import { ProfileDataModel } from "./profile.modal";
+import { ProfileDataModel } from "./profile.model";
 import { ProfileData } from "./profile.validation";
 
 interface IProfileDataDal {
   upSertProfileData(data: ProfileData): Promise<ProfileData>;
+  getProfileData(userId: string): Promise<ProfileData | null>;
 }
 
 export class ProfileDataDAL implements IProfileDataDal {
@@ -11,5 +12,9 @@ export class ProfileDataDAL implements IProfileDataDal {
       upsert: true,
       new: true,
     });
+  }
+
+  async getProfileData(userId: string): Promise<ProfileData | null> {
+    return await ProfileDataModel.findOne({ userId });
   }
 }
