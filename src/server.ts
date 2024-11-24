@@ -4,11 +4,27 @@ import { Server as SocketIOServer } from "socket.io";
 
 import { app } from "./app";
 import { initializeSocket } from "./config";
+import { CryptoUtil } from "./utils/crypto.util";
 
 const server = http.createServer(app);
 let io: SocketIOServer | undefined;
 
+// Initialize crypto keys
+const initializeCryptoKeys = async () => {
+  try {
+    const cryptoUtil = CryptoUtil.getInstance();
+    await cryptoUtil.loadKeys();
+    console.log("Crypto keys loaded successfully");
+  } catch (error) {
+    console.error("Failed to load crypto keys:", error);
+    process.exit(1); // Exit if we can't load the keys
+  }
+};
+
+// Call this before starting your server
+
 export const startServer = async (port: number): Promise<void> => {
+  await initializeCryptoKeys();
   return new Promise((resolve, reject) => {
     try {
       server.listen(port, () => {

@@ -9,6 +9,7 @@ export enum PermissionCategory {
   "ANALYTICS" = "ANALYTICS",
   "SYSTEM" = "SYSTEM",
   "PROFILE" = "PROFILE",
+  "COURSE_MANAGEMENT" = "COURSE_MANAGEMENT",
 }
 
 const permissionSchema = z.object({

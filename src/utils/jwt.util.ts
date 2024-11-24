@@ -11,6 +11,8 @@ import {
 } from "@/api/v1/auth/auth.validation";
 import { ErrorTypeEnum, envConstants } from "@/constants";
 
+import { CryptoUtil } from "./crypto.util";
+
 const { JWT_ACCESS_SECRET, JWT_REFRESH_SECRET, JWT_TOKEN_FOR_ACTION_SECRET } = envConstants;
 
 export const tokenSecrets = {
@@ -19,14 +21,26 @@ export const tokenSecrets = {
   action: JWT_TOKEN_FOR_ACTION_SECRET,
 };
 
-export const generateAccessToken = (payload: JwtAccessToken) => {
+export const generateAccessToken = async (payload: JwtAccessToken): Promise<string> => {
+  const cryptoUtil = CryptoUtil.getInstance();
+  const privateKey = cryptoUtil.getPrivateKey();
+
   const validPayload = jwtAccessTokenSchema.parse(payload);
-  return jwt.sign(validPayload, JWT_ACCESS_SECRET, { expiresIn: "1h" });
+  return jwt.sign(validPayload, privateKey, {
+    algorithm: "RS256",
+    expiresIn: "1h",
+  });
 };
 
-export const generateRefreshToken = (payload: JwtRefreshToken) => {
+export const generateRefreshToken = async (payload: JwtRefreshToken): Promise<string> => {
+  const cryptoUtil = CryptoUtil.getInstance();
+  const privateKey = cryptoUtil.getPrivateKey();
+
   const validPayload = jwtRefreshTokenSchema.parse(payload);
-  return jwt.sign(validPayload, JWT_REFRESH_SECRET, { expiresIn: "7d" });
+  return jwt.sign(validPayload, privateKey, {
+    algorithm: "RS256",
+    expiresIn: "7d",
+  });
 };
 
 export const generateTokenForAction = (payload: JwtActionToken) => {
@@ -38,17 +52,14 @@ export const generateTokenForAction = (payload: JwtActionToken) => {
 
 export const verifyJWTToken = async <T>(token: string, tokenType: "access" | "refresh" | "action"): Promise<T> => {
   try {
-    const secret = tokenSecrets[tokenType];
+    const cryptoUtil = CryptoUtil.getInstance();
+    const publicKey = cryptoUtil.getPublicKey();
 
-    if (!secret) {
-      throw new Error(ErrorTypeEnum.enum.INTERNAL_SERVER_ERROR);
-    }
+    const verifiedToken = jwt.verify(token, publicKey, {
+      algorithms: ["RS256"],
+    });
 
-    const verifiedToken = jwt.verify(token, secret);
-
-    // TODO: move fetch token details to AuthService
-    // Security: Invalidate the refresh token after it's used to obtain a new access token,
-    // to prevent token reuse attacks and ensure that only the intended user can access the system.
+    // Only check refresh tokens in database
     if (tokenType === "refresh") {
       const storedToken = await AuthDAL.getAuthByRefreshToken(token);
       if (!storedToken) {

@@ -118,8 +118,11 @@ export class AuthService {
   static async generateAccessAndRefreshToken(userId: string) {
     validateObjectId(userId);
 
-    const refreshToken = generateRefreshToken({ id: userId });
-    const accessToken = generateAccessToken({ userId });
+    // Generate both tokens concurrently
+    const [accessToken, refreshToken] = await Promise.all([
+      generateAccessToken({ userId }),
+      generateRefreshToken({ id: userId }),
+    ]);
 
     await AuthDAL.upsertAuthTokens({ userId, refreshToken });
 
