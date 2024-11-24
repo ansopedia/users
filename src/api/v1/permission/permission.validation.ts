@@ -45,5 +45,5 @@ export const getPermissionSchema = permissionSchema.omit({
 });
 
 export type Permission = z.infer<typeof permissionSchema>;
-export type createPermission = z.infer<typeof createPermissionSchema>;
-export type getPermission = z.infer<typeof getPermissionSchema>;
+export type CreatePermission = z.infer<typeof createPermissionSchema>;
+export type GetPermission = z.infer<typeof getPermissionSchema>;

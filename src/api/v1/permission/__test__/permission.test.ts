@@ -6,9 +6,9 @@ import {
   getPermissions,
 } from "@/utils/test";
 
-import { PermissionCategory, createPermission } from "../permission.validation";
+import { CreatePermission, PermissionCategory } from "../permission.validation";
 
-const VALID_PERMISSION: createPermission = {
+const VALID_PERMISSION: CreatePermission = {
   name: "create-permission",
   description: "this is crete permission creating first time",
   category: PermissionCategory.SYSTEM,

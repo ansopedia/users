@@ -34,6 +34,8 @@ const errorType = [
   "INITIAL_SETUP_FAILED",
   "NOT_ENOUGH_PERMISSION",
   "TOO_MANY_REQUESTS",
+  "TOKEN_NOT_ACTIVE",
+  "INVALID_TOKEN_AUDIENCE",
 ] as const;
 
 export const ErrorTypeEnum = z.enum(errorType);
@@ -197,6 +199,14 @@ export const errorMap = {
   [ErrorTypeEnum.enum.TOO_MANY_REQUESTS]: {
     httpStatusCode: STATUS_CODES.TOO_MANY_REQUESTS,
     body: { code: "too_many_requests", message: "Too many requests" },
+  },
+  [ErrorTypeEnum.enum.TOKEN_NOT_ACTIVE]: {
+    httpStatusCode: STATUS_CODES.UNAUTHORIZED,
+    body: { code: "token_not_active", message: "Token not active" },
+  },
+  [ErrorTypeEnum.enum.INVALID_TOKEN_AUDIENCE]: {
+    httpStatusCode: STATUS_CODES.UNAUTHORIZED,
+    body: { code: "invalid_token_audience", message: "Invalid token audience" },
   },
 };
 

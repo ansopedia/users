@@ -1,6 +1,6 @@
 import { Types } from "mongoose";
 
-import { PermissionCategory, createPermission } from "@/api/v1/permission/permission.validation";
+import { CreatePermission, PermissionCategory } from "@/api/v1/permission/permission.validation";
 import { createRole } from "@/api/v1/role/role.validation";
 
 import { envConstants } from "./env.constant";
@@ -64,7 +64,7 @@ export const ROLES = {
   USER: "user",
 };
 
-export const defaultPermissions: createPermission[] = [
+export const defaultPermissions: CreatePermission[] = [
   // User Management Permissions
   {
     name: PERMISSIONS.CREATE_USERS,
