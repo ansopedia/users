@@ -1,6 +1,6 @@
 import { Types } from "mongoose";
 
-import { PermissionCategory, createPermission } from "@/api/v1/permission/permission.validation";
+import { CreatePermission, PermissionCategory } from "@/api/v1/permission/permission.validation";
 import { createRole } from "@/api/v1/role/role.validation";
 
 import { envConstants } from "./env.constant";
@@ -45,6 +45,14 @@ export const PERMISSIONS = {
   VIEW_PROFILE: "view-profile",
   EDIT_PROFILE: "edit-profile",
   DELETE_PROFILE: "delete-profile",
+
+  // Course Management Permissions
+  CREATE_COURSE: "create-course",
+  VIEW_COURSE: "view-course",
+  EDIT_COURSE: "edit-course",
+  DELETE_COURSE: "delete-course",
+  RESTORE_COURSE: "restore-course",
+  UPDATE_COURSE: "update-course",
 } as const;
 
 // Create a type based on the values of PERMISSIONS
@@ -56,7 +64,7 @@ export const ROLES = {
   USER: "user",
 };
 
-export const defaultPermissions: createPermission[] = [
+export const defaultPermissions: CreatePermission[] = [
   // User Management Permissions
   {
     name: PERMISSIONS.CREATE_USERS,
@@ -224,6 +232,50 @@ export const defaultPermissions: createPermission[] = [
     name: PERMISSIONS.DELETE_PROFILE,
     description: "Allows the user to delete their profile",
     category: PermissionCategory.PROFILE,
+    createdBy: systemUserObjectId,
+    isDeleted: false,
+  },
+
+  // Course Management Permissions
+  {
+    name: PERMISSIONS.CREATE_COURSE,
+    description: "Allows the user to create a new course",
+    category: PermissionCategory.COURSE_MANAGEMENT,
+    createdBy: systemUserObjectId,
+    isDeleted: false,
+  },
+  {
+    name: PERMISSIONS.VIEW_COURSE,
+    description: "Allows the user to view courses",
+    category: PermissionCategory.COURSE_MANAGEMENT,
+    createdBy: systemUserObjectId,
+    isDeleted: false,
+  },
+  {
+    name: PERMISSIONS.EDIT_COURSE,
+    description: "Allows the user to edit courses",
+    category: PermissionCategory.COURSE_MANAGEMENT,
+    createdBy: systemUserObjectId,
+    isDeleted: false,
+  },
+  {
+    name: PERMISSIONS.DELETE_COURSE,
+    description: "Allows the user to delete courses",
+    category: PermissionCategory.COURSE_MANAGEMENT,
+    createdBy: systemUserObjectId,
+    isDeleted: false,
+  },
+  {
+    name: PERMISSIONS.RESTORE_COURSE,
+    description: "Allows the user to restore courses",
+    category: PermissionCategory.COURSE_MANAGEMENT,
+    createdBy: systemUserObjectId,
+    isDeleted: false,
+  },
+  {
+    name: PERMISSIONS.UPDATE_COURSE,
+    description: "Allows the user to update course",
+    category: PermissionCategory.COURSE_MANAGEMENT,
     createdBy: systemUserObjectId,
     isDeleted: false,
   },

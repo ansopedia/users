@@ -1,15 +1,15 @@
 import { PermissionModel } from "./permission.model";
-import { Permission, createPermission } from "./permission.validation";
+import { CreatePermission, Permission } from "./permission.validation";
 
 export class PermissionDAL {
-  static async createPermission(permission: createPermission): Promise<Permission> {
+  static async createPermission(permission: CreatePermission): Promise<Permission> {
     return await PermissionModel.create({
       ...permission,
       updatedBy: permission.createdBy,
     });
   }
 
-  static async createPermissions(permission: createPermission[]): Promise<Permission[]> {
+  static async createPermissions(permission: CreatePermission[]): Promise<Permission[]> {
     return await PermissionModel.insertMany(
       permission.map((permission) => ({
         ...permission,

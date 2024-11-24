@@ -1,15 +1,15 @@
 import supertest, { Response } from "supertest";
 
 import { success } from "@/api/v1/permission/permission.constant";
-import { createPermission } from "@/api/v1/permission/permission.validation";
+import { CreatePermission } from "@/api/v1/permission/permission.validation";
 import { app } from "@/app";
 import { STATUS_CODES } from "@/constants";
 
-export const createPermissionRequest = async (permission: createPermission): Promise<Response> => {
+export const createPermissionRequest = async (permission: CreatePermission): Promise<Response> => {
   return await supertest(app).post("/api/v1/permissions").send(permission);
 };
 
-export const expectCreatePermissionSuccess = (response: Response, permission: createPermission): void => {
+export const expectCreatePermissionSuccess = (response: Response, permission: CreatePermission): void => {
   const { statusCode, body } = response;
 
   expect(statusCode).toBe(STATUS_CODES.CREATED);

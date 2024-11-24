@@ -1,4 +1,4 @@
-## Ansopedia User Service
+# Ansopedia User Service
 
 The Ansopedia User Service is a backend service responsible for managing user accounts and authentication within the Ansopedia learning platform. It provides functionalities like:
 
@@ -26,26 +26,33 @@ Before we dive into the steps, let's break down the scripts in your `package.jso
 ### Development Environment
 
 1. **Install dependencies:**
+
    ```bash
    pnpm install
    ```
+
 2. **Start development server:**
+
    ```bash
    pnpm dev
    ```
+
    This command will start a nodemon server, which will watch for changes in your TypeScript files and automatically restart the server.
 
 ### Production Environment
 
 1. **Start the production server:**
+
    ```bash
    pnpm prod
    ```
+
    This command sets the `NODE_ENV` to `production`, builds the project, and starts the server.
 
 #### Test Environment
 
 1. **Run tests:**
+
    ```bash
    pnpm test
    ```
@@ -78,3 +85,30 @@ We welcome and recognize all contributors to the Ansopedia Creator Studio.
 <a href="https://github.com/ansopedia/user-service/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=ansopedia/user-service" />
 </a>
+
+## Security Keys Setup
+
+For JWT token signing and verification, this service requires RSA key pairs.
+
+### Development Setup
+
+1. Create a `keys` directory in the project root
+2. Run the key generation script:
+
+```bash
+npm run generate-keys
+```
+
+### Production Setup
+
+For production environments, keys should be:
+
+- Generated securely offline
+- Stored in a secure key management service
+- Mounted as secrets in the container/environment
+- Never committed to version control
+
+The expected key files are:
+
+- `/keys/private.pem` - RSA private key (keep secure!)
+- `/keys/public.pem` - RSA public key (can be distributed)

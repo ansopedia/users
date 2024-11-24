@@ -9,7 +9,7 @@ import {
   validateEmail,
   validateResetPasswordSchema,
 } from "@/api/v1/user/user.validation";
-import { ErrorTypeEnum } from "@/constants";
+import { ErrorTypeEnum, Permission } from "@/constants";
 import { notificationService } from "@/services";
 import { GoogleUser } from "@/types/passport-google";
 import { comparePassword, generateAccessToken, generateRefreshToken, validateObjectId } from "@/utils";
@@ -117,9 +117,16 @@ export class AuthService {
 
   static async generateAccessAndRefreshToken(userId: string) {
     validateObjectId(userId);
+    const userRolePermissions = await UserDAL.getUserRolesAndPermissionsByUserId(userId);
 
-    const refreshToken = generateRefreshToken({ id: userId });
-    const accessToken = generateAccessToken({ userId });
+    // Generate both tokens concurrently
+    const [accessToken, refreshToken] = await Promise.all([
+      generateAccessToken({
+        userId,
+        permissions: userRolePermissions.allPermissions.map(({ name }) => name) as Permission[],
+      }),
+      generateRefreshToken({ id: userId }),
+    ]);
 
     await AuthDAL.upsertAuthTokens({ userId, refreshToken });
 
