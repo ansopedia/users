@@ -26,8 +26,8 @@ export class ProfileController {
 
   static getProfile = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const profile = await new ProfileService().getProfileData(req.body.loggedInUser.userId);
       const user = await UserService.getUserById(req.body.loggedInUser.userId);
+      const profile = await new ProfileService().getProfileData(req.body.loggedInUser.userId);
       sendResponse({
         response: res,
         message: success.PROFILE_FETCHED_SUCCESSFULLY,
