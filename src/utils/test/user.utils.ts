@@ -1,7 +1,7 @@
 import supertest, { Response } from 'supertest';
 import { app } from '@/app';
 import { errorMap, ErrorTypeEnum, STATUS_CODES } from '@/constants';
-import { CreateUser } from '../../api/v1/user/user.validation';
+import { CreateUser, Pagination } from '../../api/v1/user/user.validation';
 import { success } from '../../api/v1/user/user.constant';
 
 export const expectBadRequestResponseForValidationError = (response: Response): void => {
@@ -39,6 +39,10 @@ export function expectUserCreationSuccess(response: Response, user: CreateUser):
 
 export async function findUserByUsername(username: string): Promise<Response> {
   return supertest(app).get(`/api/v1/users/${username}`);
+}
+
+export async function getAllUsers(queryParams: Pagination): Promise<Response> {
+  return supertest(app).get(`/api/v1/users`).query(queryParams);
 }
 
 export function expectUserNotFoundError(response: Response): void {

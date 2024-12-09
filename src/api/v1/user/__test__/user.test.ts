@@ -1,5 +1,3 @@
-import supertest from 'supertest';
-import { app } from '@/app';
 import { success } from '../user.constant';
 import { ErrorTypeEnum, STATUS_CODES, defaultUsers, errorMap } from '@/constants';
 import {
@@ -14,6 +12,7 @@ import {
   findUserByUsername,
   login,
   verifyAccount,
+  getAllUsers,
 } from '@/utils/test';
 
 const newUser = {
@@ -65,7 +64,6 @@ describe('User Test', () => {
   it('should respond with 409 for duplicate email', async () => {
     const errorObject = errorMap[ErrorTypeEnum.enum.EMAIL_ALREADY_EXISTS];
     const response = await createUser(newUser, authorizationHeader);
-
     expect(response.statusCode).toBe(STATUS_CODES.CONFLICT);
     expect(response.body.message).toBe(errorObject.body.message);
     expect(response.body.code).toBe(errorObject.body.code);
@@ -90,18 +88,21 @@ describe('User Test', () => {
   });
 
   it('should fetch all users', async () => {
-    const response = await supertest(app).get('/api/v1/users');
+    const response = await getAllUsers({ limit: 5, offset: 0 });
 
+    const limit = 5;
     const { statusCode, body } = response;
 
     expect(statusCode).toBe(STATUS_CODES.OK);
 
     expect(body).toMatchObject({
       message: success.USER_FETCHED_SUCCESSFULLY,
+      totalUsers: expect.any(Number),
       users: expect.any(Array),
     });
 
     if (body.users.length > 0) {
+      expect(body.users.length).toBeLessThanOrEqual(limit);
       expect(body.users[0]).not.toHaveProperty('password');
       expect(body.users[0]).not.toHaveProperty('confirmPassword');
     }

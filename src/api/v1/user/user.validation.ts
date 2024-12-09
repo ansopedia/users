@@ -38,6 +38,11 @@ export const userSchema = z.object({
   updatedAt: z.date(),
 });
 
+export const paginationSchema = z.object({
+  limit: z.number().int('Limit must be an integer').min(0, 'Limit must be at least 0').default(10),
+  offset: z.number().int('Limit must be an integer').min(0, 'Offset must be at least 0').default(0),
+});
+
 const createUserWithGoogleSchema = userSchema
   .extend({
     googleId: z.string(),
@@ -87,9 +92,14 @@ export type CreateUser = z.infer<typeof createUserSchema>;
 export type UpdateUser = z.infer<typeof updateUserSchema>;
 export type GetUser = z.infer<typeof getUserSchema>;
 export type Email = z.infer<typeof validateEmail>;
+export type Pagination = z.infer<typeof paginationSchema>;
 
 export const validateCreateUser = (data: CreateUser) => {
   createUserSchema.parse(data);
+};
+
+export const validatePagination = (data: Pagination) => {
+  paginationSchema.parse(data);
 };
 
 export interface UserRolePermission {

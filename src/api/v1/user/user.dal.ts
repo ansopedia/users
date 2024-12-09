@@ -9,8 +9,11 @@ export class UserDAL {
     return await newUser.save();
   }
 
-  static async getAllUsers(): Promise<User[]> {
-    return await UserModel.find({ isDeleted: false });
+  static async getAllUsers(limit: number, offset: number): Promise<{ users: User[]; totalUsers: number }> {
+    const users = await UserModel.find({ isDeleted: false }).skip(offset).limit(limit).exec();
+
+    const totalUsers = await UserModel.countDocuments({ isDeleted: false });
+    return { users, totalUsers };
   }
 
   static async getUser(validUserData: Login): Promise<User | null> {
