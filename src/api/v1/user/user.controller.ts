@@ -1,8 +1,10 @@
-import { NextFunction, Request, Response } from 'express';
-import { sendResponse } from '@/utils';
-import { STATUS_CODES } from '@/constants';
-import { UserService } from './user.service';
-import { success } from './user.constant';
+import { NextFunction, Request, Response } from "express";
+
+import { STATUS_CODES } from "@/constants";
+import { sendResponse } from "@/utils";
+
+import { success } from "./user.constant";
+import { UserService } from "./user.service";
 
 export const createUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -10,7 +12,7 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
     sendResponse({
       response: res,
       message: success.USER_CREATED_SUCCESSFULLY,
-      payload: {
+      data: {
         user,
       },
       statusCode: STATUS_CODES.CREATED,
@@ -28,7 +30,8 @@ export const getAllUsers = async (req: Request, res: Response, next: NextFunctio
     sendResponse({
       response: res,
       message: success.USER_FETCHED_SUCCESSFULLY,
-      payload: {
+  
+      data: {   
         totalUsers,
         users,
       },
@@ -45,8 +48,8 @@ export const getUserByUsername = async (req: Request, res: Response, next: NextF
     sendResponse({
       response: res,
       message: success.USER_FETCHED_SUCCESSFULLY,
-      payload: {
-        user,
+      data: {
+        ...user,
       },
       statusCode: STATUS_CODES.OK,
     });
@@ -61,7 +64,7 @@ export const softDeleteUser = async (req: Request, res: Response, next: NextFunc
     sendResponse({
       response: res,
       message: success.USER_DELETED_SUCCESSFULLY,
-      payload: {
+      data: {
         user,
       },
       statusCode: STATUS_CODES.OK,
@@ -77,7 +80,7 @@ export const restoreUser = async (req: Request, res: Response, next: NextFunctio
     sendResponse({
       response: res,
       message: success.USER_RESTORED_SUCCESSFULLY,
-      payload: {
+      data: {
         user,
       },
       statusCode: STATUS_CODES.OK,

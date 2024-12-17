@@ -1,19 +1,19 @@
-import { UserDAL } from './user.dal';
-import { UserDto } from './user.dto';
+import { ErrorTypeEnum, ROLES } from "@/constants";
+import { generateRandomUsername, validateObjectId } from "@/utils";
+
+import { RoleDAL } from "../role/role.dal";
+import { UserRoleService } from "../userRole/user-role.service";
+import { UserDAL } from "./user.dal";
+import { UserDto } from "./user.dto";
 import {
   CreateUser,
-  validateCreateUser,
   Email,
   GetUser,
   UpdateUser,
+  validateCreateUser,
   validateEmail,
   validateUsername,
-  validatePagination,
-} from './user.validation';
-import { UserRoleService } from '../userRole/user-role.service';
-import { generateRandomUsername, validateObjectId } from '@/utils';
-import { ErrorTypeEnum, ROLES } from '@/constants';
-import { RoleDAL } from '../role/role.dal';
+} from "./user.validation";
 
 export class UserService {
   static async generateUniqueUsername(username: string): Promise<string> {
@@ -43,18 +43,17 @@ export class UserService {
 
     if (!userRole) throw new Error(ErrorTypeEnum.enum.INTERNAL_SERVER_ERROR);
 
-    await UserRoleService.createUserRole({ userId: createdUser.id, roleId: userRole.id });
+    await UserRoleService.createUserRole({
+      userId: createdUser.id,
+      roleId: userRole.id,
+    });
 
     return UserDto(createdUser).getUser();
   }
 
-  static async getAllUsers(limit: number, offset: number): Promise<{ users: GetUser[]; totalUsers: number }> {
-    validatePagination({ limit, offset });
-    const { users, totalUsers } = await UserDAL.getAllUsers(limit, offset);
-    return {
-      users: users.map((user) => UserDto(user).getUser()),
-      totalUsers,
-    };
+  static async getAllUsers(): Promise<GetUser[]> {
+    const users = await UserDAL.getAllUsers();
+    return users.map((user) => UserDto(user).getUser());
   }
 
   static async getUserByUsername(username: string): Promise<GetUser> {
@@ -86,9 +85,9 @@ export class UserService {
   }
 
   static async getUserByEmail(email: Email): Promise<GetUser> {
-    const validEmail = validateEmail.parse(email);
+    validateEmail(email);
 
-    const user = await UserDAL.getUserByEmail(validEmail);
+    const user = await UserDAL.getUserByEmail(email);
 
     if (!user) throw new Error(ErrorTypeEnum.enum.USER_NOT_FOUND);
 
@@ -116,13 +115,9 @@ export class UserService {
   }
 
   static async updateUser(userId: string, userData: UpdateUser): Promise<GetUser> {
-    const validateData = validateObjectId(userId);
+    validateObjectId(userId);
 
-    const user = await UserDAL.getUserById(validateData);
-
-    if (!user) throw new Error(ErrorTypeEnum.enum.USER_NOT_FOUND);
-
-    const updatedUser = await UserDAL.updateUser(validateData, userData);
+    const updatedUser = await UserDAL.updateUser(userId, userData);
 
     if (!updatedUser) throw new Error(ErrorTypeEnum.enum.INTERNAL_SERVER_ERROR);
 

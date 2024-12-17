@@ -1,4 +1,4 @@
-## Ansopedia User Service
+# Ansopedia User Service
 
 The Ansopedia User Service is a backend service responsible for managing user accounts and authentication within the Ansopedia learning platform. It provides functionalities like:
 
@@ -6,10 +6,6 @@ The Ansopedia User Service is a backend service responsible for managing user ac
 - **User Management:** Offers APIs to manage user profiles, preferences, and potentially user roles (if permission levels exist).
 - **Authentication:** Implements robust authentication mechanisms (e.g., JWT tokens) to secure access to Ansopedia features and resources.
 - **Integration:** Collaborates with other services like Ansopedia Studio API to manage user permissions for content creation and interaction.
-
-**This description highlights the core functionalities of the user service, emphasizing its role in user accounts, authentication, and potential integration with other services within the Ansopedia ecosystem.**
-
-# Running Your API: Development, Production, and Test Environments
 
 ## Understanding the Scripts
 
@@ -30,26 +26,33 @@ Before we dive into the steps, let's break down the scripts in your `package.jso
 ### Development Environment
 
 1. **Install dependencies:**
+
    ```bash
    pnpm install
    ```
+
 2. **Start development server:**
+
    ```bash
    pnpm dev
    ```
+
    This command will start a nodemon server, which will watch for changes in your TypeScript files and automatically restart the server.
 
 ### Production Environment
 
 1. **Start the production server:**
+
    ```bash
    pnpm prod
    ```
+
    This command sets the `NODE_ENV` to `production`, builds the project, and starts the server.
 
 #### Test Environment
 
 1. **Run tests:**
+
    ```bash
    pnpm test
    ```
@@ -62,3 +65,50 @@ Before we dive into the steps, let's break down the scripts in your `package.jso
 - **Formatting:**
   - Check for code formatting issues: `pnpm prettier:check`
   - Automatically fix code formatting issues: `pnpm prettier:fix`
+
+## License
+
+By contributing, you agree that your contributions will be licensed under the project's [LICENSE](./LICENSE).
+
+## Contributing
+
+We welcome contributions to the Ansopedia Creator Studio! Please read our [CONTRIBUTING.md](./CONTRIBUTING.md) for more details.
+
+## Code of Conduct
+
+We have a [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md) that outlines our expectations for behavior in the community. Please read it.
+
+## Contributors
+
+We welcome and recognize all contributors to the Ansopedia Creator Studio.
+
+<a href="https://github.com/ansopedia/user-service/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=ansopedia/user-service" />
+</a>
+
+## Security Keys Setup
+
+For JWT token signing and verification, this service requires RSA key pairs.
+
+### Development Setup
+
+1. Create a `keys` directory in the project root
+2. Run the key generation script:
+
+```bash
+npm run generate-keys
+```
+
+### Production Setup
+
+For production environments, keys should be:
+
+- Generated securely offline
+- Stored in a secure key management service
+- Mounted as secrets in the container/environment
+- Never committed to version control
+
+The expected key files are:
+
+- `/keys/private.pem` - RSA private key (keep secure!)
+- `/keys/public.pem` - RSA public key (can be distributed)

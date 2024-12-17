@@ -1,8 +1,10 @@
-import { NextFunction, Request, Response } from 'express';
-import { sendResponse } from '@/utils';
-import { STATUS_CODES } from '@/constants';
-import { RoleService } from './role.service';
-import { success } from './role.constant';
+import { NextFunction, Request, Response } from "express";
+
+import { STATUS_CODES } from "@/constants";
+import { sendResponse } from "@/utils";
+
+import { success } from "./role.constant";
+import { RoleService } from "./role.service";
 
 export const createRole = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -10,7 +12,7 @@ export const createRole = async (req: Request, res: Response, next: NextFunction
     sendResponse({
       response: res,
       message: success.ROLE_CREATED_SUCCESSFULLY,
-      payload: {
+      data: {
         role,
       },
       statusCode: STATUS_CODES.CREATED,
@@ -26,7 +28,7 @@ export const getRoles = async (_: Request, res: Response, next: NextFunction) =>
     sendResponse({
       response: res,
       message: success.ROLES_FETCHED_SUCCESSFULLY,
-      payload: {
+      data: {
         roles,
       },
       statusCode: STATUS_CODES.OK,

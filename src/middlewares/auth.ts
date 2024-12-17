@@ -1,28 +1,44 @@
-import { NextFunction, Response, Request } from 'express';
-import { extractTokenFromBearerString, verifyToken } from '@/utils/jwt.util';
-import { ErrorTypeEnum } from '@/constants';
-import { Auth, JwtAccessToken, JwtRefreshToken } from '@/api/v1/auth/auth.validation';
-import { AuthService } from '@/api/v1/auth/auth.service';
+import { NextFunction, Request, Response } from "express";
 
-const parseUser = async (req: Request, _: Response, next: NextFunction, tokenType: 'access' | 'refresh') => {
+import { AuthService } from "@/api/v1/auth/auth.service";
+import { Auth, JwtAccessToken, JwtRefreshToken } from "@/api/v1/auth/auth.validation";
+import { ErrorTypeEnum } from "@/constants";
+import { extractTokenFromBearerString, verifyJWTToken } from "@/utils/jwt.util";
+
+const parseUser = async (req: Request, _: Response, next: NextFunction, tokenType: "access" | "refresh") => {
   try {
     const authHeader = req.headers.authorization;
-
-    if (authHeader == null || authHeader === '') throw new Error(ErrorTypeEnum.enum.NO_AUTH_HEADER);
+    if (authHeader == null || authHeader === "") {
+      throw new Error(ErrorTypeEnum.enum.NO_AUTH_HEADER);
+    }
 
     const token = extractTokenFromBearerString(authHeader);
-    let user: Auth;
+    if (!token) {
+      throw new Error(ErrorTypeEnum.enum.INVALID_ACCESS);
+    }
 
-    if (tokenType === 'refresh') {
-      const { id }: JwtRefreshToken = await verifyToken<JwtRefreshToken>(token, tokenType);
-      user = await AuthService.verifyToken(id);
-    } else {
-      const { userId }: JwtAccessToken = await verifyToken<JwtAccessToken>(token, tokenType);
-      user = await AuthService.verifyToken(userId);
+    let user: Auth;
+    try {
+      if (tokenType === "refresh") {
+        const { id } = await verifyJWTToken<JwtRefreshToken>(token, tokenType);
+        user = await AuthService.verifyToken(id);
+      } else {
+        const res = await verifyJWTToken<JwtAccessToken>(token, tokenType);
+        const { userId } = res;
+        user = await AuthService.verifyToken(userId);
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      }
+      throw new Error(ErrorTypeEnum.enum.INVALID_TOKEN);
+    }
+
+    if (user === null) {
+      throw new Error(ErrorTypeEnum.enum.USER_NOT_FOUND);
     }
 
     req.body.loggedInUser = { ...user, userId: user.userId.toString() };
-
     next();
   } catch (error) {
     next(error);
@@ -30,13 +46,13 @@ const parseUser = async (req: Request, _: Response, next: NextFunction, tokenTyp
 };
 
 export const validateAccessToken = async (req: Request, res: Response, next: NextFunction) => {
-  return parseUser(req, res, next, 'access');
+  return parseUser(req, res, next, "access");
 };
 
 export const validateRefreshToken = async (req: Request, res: Response, next: NextFunction) => {
-  return parseUser(req, res, next, 'refresh');
+  return parseUser(req, res, next, "refresh");
 };
 
 export const validateOtpToken = async (req: Request, res: Response, next: NextFunction) => {
-  return parseUser(req, res, next, 'access');
+  return parseUser(req, res, next, "access");
 };

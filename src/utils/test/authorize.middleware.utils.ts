@@ -1,5 +1,6 @@
-import { Response } from 'supertest';
-import { errorMap, ErrorTypeEnum, STATUS_CODES } from '@/constants';
+import { Response } from "supertest";
+
+import { ErrorTypeEnum, STATUS_CODES, errorMap } from "@/constants";
 
 export const expectUnauthorizedResponseForMissingAuthorizationHeader = async (response: Response) => {
   const errorObject = errorMap[ErrorTypeEnum.enum.NO_AUTH_HEADER];
@@ -11,6 +12,14 @@ export const expectUnauthorizedResponseForMissingAuthorizationHeader = async (re
 
 export const expectUnauthorizedResponseForInvalidAuthorizationHeader = async (response: Response) => {
   const errorObject = errorMap[ErrorTypeEnum.enum.INVALID_ACCESS];
+
+  expect(response.statusCode).toBe(STATUS_CODES.UNAUTHORIZED);
+  expect(response.body.message).toBe(errorObject.body.message);
+  expect(response.body.code).toBe(errorObject.body.code);
+};
+
+export const expectUnauthorizedResponseForInvalidToken = async (response: Response) => {
+  const errorObject = errorMap[ErrorTypeEnum.enum.INVALID_TOKEN];
 
   expect(response.statusCode).toBe(STATUS_CODES.UNAUTHORIZED);
   expect(response.body.message).toBe(errorObject.body.message);

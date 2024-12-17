@@ -1,14 +1,15 @@
-import supertest, { Response } from 'supertest';
-import { app } from '@/app';
-import { RolePermission } from '@/api/v1/rolePermission/role-permission.validation';
-import { STATUS_CODES } from '@/constants';
-import { success } from '@/api/v1/rolePermission/role-permission.constant';
+import supertest, { Response } from "supertest";
+
+import { success } from "@/api/v1/rolePermission/role-permission.constant";
+import { RolePermission } from "@/api/v1/rolePermission/role-permission.validation";
+import { app } from "@/app";
+import { STATUS_CODES } from "@/constants";
 
 export const createRolePermissionRequest = async (rolePermission: RolePermission, authorizationHeader: string) => {
   return await supertest(app)
-    .post('/api/v1/role-permissions')
+    .post("/api/v1/role-permissions")
     .send(rolePermission)
-    .set('authorization', authorizationHeader);
+    .set("authorization", authorizationHeader);
 };
 
 export const expectCreateRolePermissionSuccess = (response: Response, rolePermission: RolePermission): void => {
@@ -20,9 +21,11 @@ export const expectCreateRolePermissionSuccess = (response: Response, rolePermis
 
   expect(body).toMatchObject({
     message: success.ROLE_PERMISSION_CREATED_SUCCESSFULLY,
-    rolePermission: {
-      roleId: rolePermission.roleId,
-      permissionId: rolePermission.permissionId,
+    data: {
+      rolePermission: {
+        roleId: rolePermission.roleId,
+        permissionId: rolePermission.permissionId,
+      },
     },
   });
 };

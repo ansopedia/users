@@ -1,7 +1,8 @@
-import { RoleDAL } from './role.dal';
-import { RoleDto } from './role.dto';
-import { createRole, createRoleSchema, getRole } from './role.validation';
-import { ErrorTypeEnum } from '@/constants';
+import { ErrorTypeEnum } from "@/constants";
+
+import { RoleDAL } from "./role.dal";
+import { RoleDto } from "./role.dto";
+import { createRole, createRoleSchema, getRole } from "./role.validation";
 
 export class RoleService {
   static async createRole(userData: createRole): Promise<getRole> {

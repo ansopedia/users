@@ -1,8 +1,10 @@
-import { NextFunction, Request, Response } from 'express';
-import { sendResponse } from '@/utils';
-import { STATUS_CODES } from '@/constants';
-import { success } from './permission.constant';
-import { PermissionService } from './permission.service';
+import { NextFunction, Request, Response } from "express";
+
+import { STATUS_CODES } from "@/constants";
+import { sendResponse } from "@/utils";
+
+import { success } from "./permission.constant";
+import { PermissionService } from "./permission.service";
 
 export const createPermission = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -10,7 +12,7 @@ export const createPermission = async (req: Request, res: Response, next: NextFu
     sendResponse({
       response: res,
       message: success.PERMISSION_CREATED_SUCCESSFULLY,
-      payload: {
+      data: {
         permission: createdPermission,
       },
       statusCode: STATUS_CODES.CREATED,
@@ -26,7 +28,7 @@ export const getPermissions = async (_: Request, res: Response, next: NextFuncti
     sendResponse({
       response: res,
       message: success.PERMISSION_FETCHED_SUCCESSFULLY,
-      payload: {
+      data: {
         permissions,
       },
       statusCode: STATUS_CODES.OK,

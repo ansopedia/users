@@ -1,27 +1,28 @@
-import express, { Request, Response, NextFunction, type Application } from 'express';
-import { pinoHttp } from 'pino-http';
-import helmet from 'helmet';
-import cors from 'cors';
-import passport from 'passport';
+import cors from "cors";
+import express, { type Application, NextFunction, Request, Response } from "express";
+import rateLimit from "express-rate-limit";
+import helmet from "helmet";
+import passport from "passport";
+import { pinoHttp } from "pino-http";
 
-import { envConstants, ErrorTypeEnum } from '@/constants';
-import { logger } from '@/utils';
-import { addAxiosHeadersMiddleware, errorHandler } from '@/middlewares';
-import { routes } from '@/routes';
+import { ErrorTypeEnum, FIFTEEN_MINUTES_IN_MS, envConstants } from "@/constants";
+import { addAxiosHeadersMiddleware, errorHandler } from "@/middlewares";
+import { routes } from "@/routes";
+import { logger } from "@/utils";
 
-import './config/passport';
+import "./config/passport";
 
 const { NODE_ENV } = envConstants;
 
 export const app: Application = express();
 
-if (NODE_ENV !== 'test') {
+if (NODE_ENV !== "test") {
   // Apply Helmet middleware with default options
   app.use(helmet());
 
   // Apply CORS middleware with a whitelist (adjust origins as needed)
-  const allowedOrigins = ['http://localhost:3000'];
-  const allowedPathsWithoutOrigin = ['/api/v1/auth/google/callback', '/api/v1/auth/google'];
+  const allowedOrigins = ["http://localhost:3000", "http://192.168.1.233:3000"];
+  const allowedPathsWithoutOrigin = ["/api/v1/auth/google/callback", "/api/v1/auth/google"];
 
   const corsOptions = {
     origin: function (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) {
@@ -37,7 +38,7 @@ if (NODE_ENV !== 'test') {
   };
 
   app.use((req: Request, res: Response, next: NextFunction) => {
-    const origin = req.get('Origin');
+    const origin = req.get("Origin");
     if (origin == undefined && !allowedPathsWithoutOrigin.includes(req.path)) {
       throw new Error(ErrorTypeEnum.enum.ORIGIN_IS_UNDEFINED);
     }
@@ -56,15 +57,25 @@ if (NODE_ENV !== 'test') {
   });
 }
 
+const globalLimiter = rateLimit({
+  windowMs: FIFTEEN_MINUTES_IN_MS, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per windowMs
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  message: "Too many requests from this IP, please try again after 15 minutes",
+});
+
+app.use(globalLimiter);
+
 app.use(express.json());
 app.use(passport.initialize());
 app.use(pinoHttp({ logger }));
 app.use(addAxiosHeadersMiddleware);
 
-app.use('/api/v1', routes);
+app.use("/api/v1", routes);
 
 // Handling non matching request from the client
-app.use('*', () => {
+app.use("*", () => {
   throw new Error(ErrorTypeEnum.enum.RESOURCE_NOT_FOUND);
 });
 

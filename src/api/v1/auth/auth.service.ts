@@ -1,18 +1,30 @@
-import { ErrorTypeEnum } from '@/constants';
-import { comparePassword, generateAccessToken, generateRefreshToken, validateObjectId } from '@/utils';
-import { UserDAL } from '@/api/v1/user/user.dal';
-import { UserService } from '@/api/v1/user/user.service';
-import { CreateUser } from '@/api/v1/user/user.validation';
-import { AuthDAL } from './auth.dal';
-import { loginSchema, Login, AuthToken, Auth } from './auth.validation';
-import { OtpService } from '@/api/v1/otp/otp.service';
-import { GoogleUser } from '@/types/passport-google';
+import { OtpService } from "@/api/v1/otp/otp.service";
+import { TokenAction, TokenService } from "@/api/v1/token";
+import { UserDAL } from "@/api/v1/user/user.dal";
+import { UserService } from "@/api/v1/user/user.service";
+import {
+  CreateUser,
+  Email,
+  ResetPassword,
+  validateEmail,
+  validateResetPasswordSchema,
+} from "@/api/v1/user/user.validation";
+import { ErrorTypeEnum, Permission } from "@/constants";
+import { notificationService } from "@/services";
+import { GoogleUser } from "@/types/passport-google";
+import { comparePassword, generateAccessToken, generateRefreshToken, validateObjectId } from "@/utils";
+
+import { AuthDAL } from "./auth.dal";
+import { Auth, AuthToken, Login, loginSchema } from "./auth.validation";
 
 export class AuthService {
   public static async signUp(userData: CreateUser) {
     await UserService.createUser(userData);
 
-    await OtpService.sendOtp({ email: userData.email, otpType: 'sendEmailVerificationOTP' });
+    await OtpService.sendOtp({
+      email: userData.email,
+      otpType: "sendEmailVerificationOTP",
+    });
   }
 
   public static async signInWithEmailOrUsernameAndPassword(userData: Login): Promise<AuthToken> {
@@ -35,14 +47,14 @@ export class AuthService {
 
   public static async signInWithGoogle(googleUser: GoogleUser): Promise<AuthToken> {
     const { id: googleId, emails, name } = googleUser;
-    const primaryEmail = emails[0];
+    const [{ value, verified }] = emails;
 
-    if (!primaryEmail?.value) {
-      throw new Error('Email not provided by Google authentication');
+    if (value === null || value === undefined) {
+      throw new Error("Email not provided by Google authentication");
     }
 
-    const email = primaryEmail.value;
-    const isEmailVerified = primaryEmail.verified;
+    const email = value;
+    const isEmailVerified = verified;
 
     // Check if the user exists by Google ID
     let userRecord = await UserService.getUserByGoogleId(googleId);
@@ -52,9 +64,12 @@ export class AuthService {
       const existingUser = await UserDAL.getUserByEmail(email);
 
       if (existingUser) {
-        userRecord = await UserService.updateUser(existingUser.id, { googleId, email });
+        userRecord = await UserService.updateUser(existingUser.id, {
+          googleId,
+          email,
+        });
       } else {
-        const username = await UserService.generateUniqueUsername(name.givenName.replace(' ', '-'));
+        const username = await UserService.generateUniqueUsername(name.givenName.replace(" ", "-"));
         userRecord = await UserService.createUser({
           email,
           username,
@@ -81,11 +96,37 @@ export class AuthService {
     return user;
   }
 
+  public static async forgetPassword(email: Email) {
+    validateEmail(email);
+    await OtpService.sendOtp({ email, otpType: "sendForgetPasswordOTP" });
+  }
+
+  public static async resetPassword(resetPassword: ResetPassword) {
+    const { password, token } = validateResetPasswordSchema(resetPassword);
+
+    const { userId } = await new TokenService().verifyActionToken(token, TokenAction.resetPassword);
+
+    const user = await UserService.updateUser(userId, { password });
+
+    notificationService.sendEmail({
+      to: user.email,
+      eventType: "sendPasswordChangeConfirmation",
+      payload: { recipientName: user.username },
+    });
+  }
+
   static async generateAccessAndRefreshToken(userId: string) {
     validateObjectId(userId);
+    const userRolePermissions = await UserDAL.getUserRolesAndPermissionsByUserId(userId);
 
-    const refreshToken = generateRefreshToken({ id: userId });
-    const accessToken = generateAccessToken({ userId });
+    // Generate both tokens concurrently
+    const [accessToken, refreshToken] = await Promise.all([
+      generateAccessToken({
+        userId,
+        permissions: userRolePermissions.allPermissions.map(({ name }) => name) as Permission[],
+      }),
+      generateRefreshToken({ id: userId }),
+    ]);
 
     await AuthDAL.upsertAuthTokens({ userId, refreshToken });
 
