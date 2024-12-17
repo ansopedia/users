@@ -13,7 +13,6 @@ export class UserDAL {
 
   static async getAllUsers(limit: number, offset: number): Promise<{ users: User[]; totalUsers: number }> {
     const users = await UserModel.find({ isDeleted: false }).skip(offset).limit(limit).exec();
-
     const totalUsers = await UserModel.countDocuments({ isDeleted: false });
     return { users, totalUsers };
   }

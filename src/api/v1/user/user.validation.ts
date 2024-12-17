@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { DEFAULT_PAGINATION_LIMIT, DEFAULT_PAGINATION_OFFSET, MAX_PAGINATION_LIMIT } from "@/constants";
+
 export const username = z
   .string()
   .min(3, "username must be at least 3 characters")
@@ -36,6 +38,20 @@ export const userSchema = z.object({
   isDeleted: z.boolean().default(false),
   createdAt: z.date(),
   updatedAt: z.date(),
+});
+
+export const paginationSchema = z.object({
+  limit: z
+    .number()
+    .int("Limit must be an integer")
+    .min(DEFAULT_PAGINATION_LIMIT, `Limit must be at least ${DEFAULT_PAGINATION_LIMIT}`)
+    .max(MAX_PAGINATION_LIMIT, `Limit must be at most ${MAX_PAGINATION_LIMIT}`)
+    .default(DEFAULT_PAGINATION_LIMIT),
+  offset: z
+    .number()
+    .int("Limit must be an integer")
+    .min(DEFAULT_PAGINATION_OFFSET, `Offset must be at least ${DEFAULT_PAGINATION_OFFSET}`)
+    .default(DEFAULT_PAGINATION_OFFSET),
 });
 
 const createUserWithGoogleSchema = userSchema
@@ -107,6 +123,7 @@ export type UpdateUser = z.infer<typeof updateUserSchema>;
 export type GetUser = z.infer<typeof getUserSchema>;
 export type Email = z.infer<typeof validEmail>;
 export type ResetPassword = z.infer<typeof resetPasswordSchema>;
+export type Pagination = z.infer<typeof paginationSchema>;
 
 export const validateCreateUser = (data: CreateUser) => {
   createUserSchema.parse(data);
@@ -114,6 +131,10 @@ export const validateCreateUser = (data: CreateUser) => {
 
 export const validateResetPasswordSchema = (data: ResetPassword): { password: string; token: string } => {
   return resetPasswordSchema.parse(data);
+};
+
+export const validatePagination = (data: Pagination) => {
+  paginationSchema.parse(data);
 };
 
 export interface UserRolePermission {

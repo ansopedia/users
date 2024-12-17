@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 
-import { STATUS_CODES } from "@/constants";
+import { DEFAULT_PAGINATION_LIMIT, DEFAULT_PAGINATION_OFFSET, STATUS_CODES } from "@/constants";
 import { sendResponse } from "@/utils";
 
 import { success } from "./user.constant";
@@ -24,14 +24,13 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
 
 export const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const limit = parseInt(req.query.limit as string) || 10; // Default limit value
-    const offset = parseInt(req.query.offset as string) || 0; // Default offset value
+    const limit = parseInt(req.query.limit as string) || DEFAULT_PAGINATION_LIMIT; // Default limit value
+    const offset = parseInt(req.query.offset as string) || DEFAULT_PAGINATION_OFFSET; // Default offset value
     const { users, totalUsers } = await UserService.getAllUsers(limit, offset);
     sendResponse({
       response: res,
       message: success.USER_FETCHED_SUCCESSFULLY,
-  
-      data: {   
+      data: {
         totalUsers,
         users,
       },
