@@ -1,6 +1,3 @@
-import supertest from "supertest";
-
-import { app } from "@/app";
 import { ErrorTypeEnum, STATUS_CODES, defaultUsers, errorMap } from "@/constants";
 import {
   createUser,
@@ -12,6 +9,7 @@ import {
   expectUserCreationSuccess,
   expectUserNotFoundError,
   findUserByUsername,
+  getAllUsers,
   login,
   verifyAccount,
 } from "@/utils/test";
@@ -44,11 +42,7 @@ describe("User Test", () => {
   });
 
   it("should not create a new user without create-user permission", async () => {
-    const unAuthorizedUser = {
-      ...newUser,
-      username: "unauthorized",
-      email: "unauthorized@gmail.com",
-    };
+    const unAuthorizedUser = { ...newUser, username: "unauthorized", email: "unauthorized@gmail.com" };
 
     const response = await createUser(unAuthorizedUser, authorizationHeader);
     expectUserCreationSuccess(response, unAuthorizedUser);
@@ -71,7 +65,6 @@ describe("User Test", () => {
   it("should respond with 409 for duplicate email", async () => {
     const errorObject = errorMap[ErrorTypeEnum.enum.EMAIL_ALREADY_EXISTS];
     const response = await createUser(newUser, authorizationHeader);
-
     expect(response.statusCode).toBe(STATUS_CODES.CONFLICT);
     expect(response.body.message).toBe(errorObject.body.message);
     expect(response.body.code).toBe(errorObject.body.code);
@@ -96,7 +89,8 @@ describe("User Test", () => {
   });
 
   it("should fetch all users", async () => {
-    const response = await supertest(app).get("/api/v1/users");
+    const limit = 5;
+    const response = await getAllUsers({ limit, offset: 0 });
 
     const { statusCode, body } = response;
 
@@ -105,11 +99,13 @@ describe("User Test", () => {
     expect(body).toMatchObject({
       message: success.USER_FETCHED_SUCCESSFULLY,
       data: {
+        totalUsers: expect.any(Number),
         users: expect.any(Array),
       },
     });
 
     if (body.data.users.length > 0) {
+      expect(body.data.users.length).toBeLessThanOrEqual(limit);
       expect(body.data.users[0]).not.toHaveProperty("password");
       expect(body.data.users[0]).not.toHaveProperty("confirmPassword");
     }

@@ -22,13 +22,17 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
   }
 };
 
-export const getAllUsers = async (_: Request, res: Response, next: NextFunction) => {
+export const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const users = await UserService.getAllUsers();
+    const limit = parseInt(req.query.limit as string) || 10; // Default limit value
+    const offset = parseInt(req.query.offset as string) || 0; // Default offset value
+    const { users, totalUsers } = await UserService.getAllUsers(limit, offset);
     sendResponse({
       response: res,
       message: success.USER_FETCHED_SUCCESSFULLY,
-      data: {
+  
+      data: {   
+        totalUsers,
         users,
       },
       statusCode: STATUS_CODES.OK,
