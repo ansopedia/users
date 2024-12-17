@@ -4,7 +4,7 @@ import { app } from "@/app";
 import { ErrorTypeEnum, STATUS_CODES, errorMap } from "@/constants";
 
 import { success } from "../../api/v1/user/user.constant";
-import { CreateUser } from "../../api/v1/user/user.validation";
+import { CreateUser, Pagination } from "../../api/v1/user/user.validation";
 
 export const expectBadRequestResponseForValidationError = (response: Response): void => {
   const errorObject = errorMap[ErrorTypeEnum.enum.VALIDATION_ERROR];
@@ -43,6 +43,10 @@ export const expectUserCreationSuccess = (response: Response, user: CreateUser):
 
 export const findUserByUsername = async (username: string): Promise<Response> => {
   return supertest(app).get(`/api/v1/users/${username}`);
+};
+
+export const getAllUsers = (queryParams: Pagination): Promise<Response> => {
+  return supertest(app).get(`/api/v1/users`).query(queryParams);
 };
 
 export const expectUserNotFoundError = (response: Response): void => {

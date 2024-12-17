@@ -12,6 +12,7 @@ import {
   UpdateUser,
   validateCreateUser,
   validateEmail,
+  validatePagination,
   validateUsername,
 } from "./user.validation";
 
@@ -51,9 +52,13 @@ export class UserService {
     return UserDto(createdUser).getUser();
   }
 
-  static async getAllUsers(): Promise<GetUser[]> {
-    const users = await UserDAL.getAllUsers();
-    return users.map((user) => UserDto(user).getUser());
+  static async getAllUsers(limit: number, offset: number): Promise<{ users: GetUser[]; totalUsers: number }> {
+    validatePagination({ limit, offset });
+    const { users, totalUsers } = await UserDAL.getAllUsers(limit, offset);
+    return {
+      users: users.map((user) => UserDto(user).getUser()),
+      totalUsers,
+    };
   }
 
   static async getUserByUsername(username: string): Promise<GetUser> {

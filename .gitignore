@@ -31,3 +31,6 @@ Thumbs.db
 # Crypto keys
 /keys
 *.pem
+
+# History
+*.history
