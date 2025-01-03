@@ -1,4 +1,3 @@
-import { JwtAccessToken } from "@/api/v1/auth/auth.validation";
 import { ErrorTypeEnum } from "@/constants";
 import { extractTokenFromBearerString, generateAccessToken, generateRefreshToken } from "@/utils";
 
@@ -8,8 +7,9 @@ jest.mock("jsonwebtoken", () => ({
 }));
 
 describe("Jwt token", () => {
-  const mockPayload: JwtAccessToken = {
+  const mockdata = {
     userId: "123",
+    permissions: [],
   };
 
   beforeEach(() => {
@@ -17,7 +17,7 @@ describe("Jwt token", () => {
   });
 
   it("should generate an access token", () => {
-    const token = generateAccessToken(mockPayload);
+    const token = generateAccessToken(mockdata);
     expect(token).toBeDefined();
   });
 

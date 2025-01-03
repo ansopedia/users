@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 
-import { STATUS_CODES } from "@/constants";
+import { DEFAULT_PAGINATION_LIMIT, DEFAULT_PAGINATION_OFFSET, STATUS_CODES } from "@/constants";
 import { sendResponse } from "@/utils";
 
 import { success } from "./user.constant";
@@ -12,7 +12,7 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
     sendResponse({
       response: res,
       message: success.USER_CREATED_SUCCESSFULLY,
-      payload: {
+      data: {
         user,
       },
       statusCode: STATUS_CODES.CREATED,
@@ -22,13 +22,16 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
   }
 };
 
-export const getAllUsers = async (_: Request, res: Response, next: NextFunction) => {
+export const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const users = await UserService.getAllUsers();
+    const limit = parseInt(req.query.limit as string) || DEFAULT_PAGINATION_LIMIT; // Default limit value
+    const offset = parseInt(req.query.offset as string) || DEFAULT_PAGINATION_OFFSET; // Default offset value
+    const { users, totalUsers } = await UserService.getAllUsers(limit, offset);
     sendResponse({
       response: res,
       message: success.USER_FETCHED_SUCCESSFULLY,
-      payload: {
+      data: {
+        totalUsers,
         users,
       },
       statusCode: STATUS_CODES.OK,
@@ -44,8 +47,8 @@ export const getUserByUsername = async (req: Request, res: Response, next: NextF
     sendResponse({
       response: res,
       message: success.USER_FETCHED_SUCCESSFULLY,
-      payload: {
-        user,
+      data: {
+        ...user,
       },
       statusCode: STATUS_CODES.OK,
     });
@@ -60,7 +63,7 @@ export const softDeleteUser = async (req: Request, res: Response, next: NextFunc
     sendResponse({
       response: res,
       message: success.USER_DELETED_SUCCESSFULLY,
-      payload: {
+      data: {
         user,
       },
       statusCode: STATUS_CODES.OK,
@@ -76,7 +79,7 @@ export const restoreUser = async (req: Request, res: Response, next: NextFunctio
     sendResponse({
       response: res,
       message: success.USER_RESTORED_SUCCESSFULLY,
-      payload: {
+      data: {
         user,
       },
       statusCode: STATUS_CODES.OK,

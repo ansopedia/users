@@ -4,7 +4,7 @@ import { app } from "@/app";
 import { ErrorTypeEnum, STATUS_CODES, errorMap } from "@/constants";
 
 import { success } from "../../api/v1/user/user.constant";
-import { CreateUser } from "../../api/v1/user/user.validation";
+import { CreateUser, Pagination } from "../../api/v1/user/user.validation";
 
 export const expectBadRequestResponseForValidationError = (response: Response): void => {
   const errorObject = errorMap[ErrorTypeEnum.enum.VALIDATION_ERROR];
@@ -28,19 +28,25 @@ export const expectUserCreationSuccess = (response: Response, user: CreateUser):
   expect(statusCode).toBe(STATUS_CODES.CREATED);
   expect(body).toMatchObject({
     message: success.USER_CREATED_SUCCESSFULLY,
-    user: {
-      id: expect.any(String),
-      email: user.email,
-      username: user.username,
+    data: {
+      user: {
+        id: expect.any(String),
+        email: user.email,
+        username: user.username,
+      },
     },
   });
 
-  expect(body.user).not.toHaveProperty("password");
-  expect(body.user).not.toHaveProperty("confirmPassword");
+  expect(body.data.user).not.toHaveProperty("password");
+  expect(body.data.user).not.toHaveProperty("confirmPassword");
 };
 
 export const findUserByUsername = async (username: string): Promise<Response> => {
   return supertest(app).get(`/api/v1/users/${username}`);
+};
+
+export const getAllUsers = (queryParams: Pagination): Promise<Response> => {
+  return supertest(app).get(`/api/v1/users`).query(queryParams);
 };
 
 export const expectUserNotFoundError = (response: Response): void => {
@@ -58,19 +64,21 @@ export const expectUserNotFoundError = (response: Response): void => {
 export const expectFindUserByUsernameSuccess = (response: Response, user: CreateUser): void => {
   expect(response).toBeDefined();
   const { statusCode, body } = response;
-
   expect(statusCode).toBe(STATUS_CODES.OK);
   expect(body).toMatchObject({
     message: success.USER_FETCHED_SUCCESSFULLY,
-    user: {
+    data: {
       id: expect.any(String),
       email: user.email,
       username: user.username,
+      isEmailVerified: expect.any(Boolean),
+      createdAt: expect.any(String),
+      updatedAt: expect.any(String),
     },
   });
 
-  expect(body.user).not.toHaveProperty("password");
-  expect(body.user).not.toHaveProperty("confirmPassword");
+  expect(body.data).not.toHaveProperty("password");
+  expect(body.data).not.toHaveProperty("confirmPassword");
 };
 
 export const deleteUser = async (userId: string, authorizationHeader: string): Promise<Response> => {
@@ -85,11 +93,11 @@ export const expectDeleteUserSuccess = (response: Response): void => {
 
   expect(body).toMatchObject({
     message: success.USER_DELETED_SUCCESSFULLY,
-    user: { id: expect.any(String) },
+    data: { user: { id: expect.any(String) } },
   });
 
-  expect(body.user).not.toHaveProperty("password");
-  expect(body.user).not.toHaveProperty("confirmPassword");
+  expect(body.data.user).not.toHaveProperty("password");
+  expect(body.data.user).not.toHaveProperty("confirmPassword");
 };
 
 export const restoreUser = async (userId: string, authorizationHeader: string): Promise<Response> => {
@@ -104,9 +112,9 @@ export const expectRestoreUserSuccess = (response: Response): void => {
 
   expect(body).toMatchObject({
     message: success.USER_RESTORED_SUCCESSFULLY,
-    user: { id: expect.any(String) },
+    data: { user: { id: expect.any(String) } },
   });
 
-  expect(body.user).not.toHaveProperty("password");
-  expect(body.user).not.toHaveProperty("confirmPassword");
+  expect(body.data.user).not.toHaveProperty("password");
+  expect(body.data.user).not.toHaveProperty("confirmPassword");
 };

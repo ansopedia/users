@@ -28,7 +28,7 @@ export class OtpService {
       notificationService.sendEmail({
         to: user.email,
         eventType: otpType,
-        payload: { otp },
+        payload: { otp, recipientName: user.username },
       });
     }
 

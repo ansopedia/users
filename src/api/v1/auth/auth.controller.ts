@@ -42,7 +42,7 @@ export class AuthController {
         response: res,
         message: success.LOGGED_IN_SUCCESSFULLY,
         statusCode: STATUS_CODES.OK,
-        payload: { userId },
+        data: { userId },
       });
     } catch (error) {
       next(error);
@@ -57,11 +57,11 @@ export class AuthController {
       AuthController.setTokenCookies(res, accessToken, refreshToken);
 
       // TODO: used action token instead of access token
-      res.cookie("access-token", accessToken, {
+      res.cookie("authorization", accessToken, {
         httpOnly: true,
         secure: true,
         sameSite: "strict",
-        maxAge: 60000, // 1 minute
+        maxAge: 1000 * 60 * 60, // 1hr
       });
 
       // Validate and sanitize the redirect URL

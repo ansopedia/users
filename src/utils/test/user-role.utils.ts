@@ -18,9 +18,11 @@ export const expectCreateUserRoleSuccess = (response: Response, { roleId, userId
 
   expect(body).toMatchObject({
     message: success.USER_ROLE_CREATED_SUCCESSFULLY,
-    userRole: {
-      roleId,
-      userId,
+    data: {
+      userRole: {
+        roleId,
+        userId,
+      },
     },
   });
 };

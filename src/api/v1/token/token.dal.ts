@@ -2,17 +2,17 @@ import { TokenModel } from "./token.model";
 import { CreateToken, Token, UpdateToken } from "./token.validation";
 
 interface ITokenDal {
-  saveToken(payload: Token): Promise<CreateToken>;
+  saveToken(data: Token): Promise<CreateToken>;
   getToken(token: string): Promise<Token | null>;
   getTokensByUserId(userId: string): Promise<Token[] | null>;
-  updateToken(tokenId: string, payload: Token): Promise<Token | null>;
+  updateToken(tokenId: string, data: Token): Promise<Token | null>;
   deleteToken(tokenId: string): Promise<Token | null>;
   replaceTokenForUser(createTokenSchema: CreateToken): Promise<Token | null>;
 }
 
 export class TokenDAL implements ITokenDal {
-  async saveToken(payload: CreateToken): Promise<Token> {
-    return await TokenModel.create(payload);
+  async saveToken(data: CreateToken): Promise<Token> {
+    return await TokenModel.create(data);
   }
 
   async getToken(token: string): Promise<Token | null> {
@@ -23,8 +23,8 @@ export class TokenDAL implements ITokenDal {
     return await TokenModel.find({ userId });
   }
 
-  async updateToken(tokenId: string, payload: UpdateToken): Promise<Token | null> {
-    return await TokenModel.findByIdAndUpdate(tokenId, payload, { new: true });
+  async updateToken(tokenId: string, data: UpdateToken): Promise<Token | null> {
+    return await TokenModel.findByIdAndUpdate(tokenId, data, { new: true });
   }
 
   async deleteToken(tokenId: string): Promise<Token | null> {

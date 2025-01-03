@@ -1,4 +1,4 @@
-import { PermissionCategory, createPermission } from "@/api/v1/permission/permission.validation";
+import { CreatePermission, PermissionCategory } from "@/api/v1/permission/permission.validation";
 import { createRole } from "@/api/v1/role/role.validation";
 import { defaultUsers } from "@/constants";
 import {
@@ -20,7 +20,7 @@ const VALID_ROLE: createRole = {
   isSystemRole: false,
 };
 
-const VALID_PERMISSION: createPermission = {
+const VALID_PERMISSION: CreatePermission = {
   name: "new-permissions",
   description: "this is crete permission creating first time",
   createdBy: "65f6dac9156e93e7b6f1b88d",
@@ -44,8 +44,8 @@ describe("Role Permission Test", () => {
     expectCreatePermissionSuccess(permissionRes, VALID_PERMISSION);
 
     const rolePermission = {
-      roleId: roleResponse.body.role.id,
-      permissionId: permissionRes.body.permission.id,
+      roleId: roleResponse.body.data.role.id,
+      permissionId: permissionRes.body.data.permission.id,
     };
 
     const response = await createRolePermissionRequest(rolePermission, authorizationHeader);

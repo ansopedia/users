@@ -25,7 +25,7 @@ describe("Profile Service", () => {
   beforeAll(async () => {
     const loginResponse = await login(defaultUsers);
     expectLoginSuccess(loginResponse);
-    loggedInUserId = loginResponse.body.userId;
+    loggedInUserId = loginResponse.body.data.userId;
     authorizationHeader = `Bearer ${loginResponse.header["authorization"]}`;
   });
 
@@ -41,7 +41,7 @@ describe("Profile Service", () => {
     });
 
     it("should throw an error if invalid access token is provided", async () => {
-      const response = await upSertProfileData({}, "Bearer invalid-access-token");
+      const response = await upSertProfileData({}, "Bearer invalid-authorization");
       expectUnauthorizedResponseForInvalidToken(response);
     });
 

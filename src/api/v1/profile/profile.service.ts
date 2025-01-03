@@ -1,5 +1,4 @@
 import { ProfileDataDAL } from "./profile.dal";
-import { ProfileDto } from "./profile.dto";
 import { ProfileData, validateProfileSchema } from "./profile.validation";
 
 export class ProfileService {
@@ -9,10 +8,12 @@ export class ProfileService {
     this.profileDataDal = new ProfileDataDAL();
   }
 
-  upSertProfileData = async (payload: ProfileData) => {
-    const profileData = validateProfileSchema(payload);
+  upSertProfileData = async (data: ProfileData) => {
+    const profileData = validateProfileSchema(data);
+    return await this.profileDataDal.upSertProfileData(profileData);
+  };
 
-    const updateProfileData = await this.profileDataDal.upSertProfileData(profileData);
-    return ProfileDto(updateProfileData).getProfile();
+  getProfileData = async (userId: string) => {
+    return await this.profileDataDal.getProfileData(userId);
   };
 }

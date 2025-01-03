@@ -12,7 +12,7 @@ export const createUserRole = async (req: Request, res: Response, next: NextFunc
     sendResponse({
       response: res,
       message: success.USER_ROLE_CREATED_SUCCESSFULLY,
-      payload: {
+      data: {
         userRole,
       },
       statusCode: STATUS_CODES.CREATED,

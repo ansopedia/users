@@ -12,7 +12,7 @@ export const createRolePermission = async (req: Request, res: Response, next: Ne
     sendResponse({
       response: res,
       message: success.ROLE_PERMISSION_CREATED_SUCCESSFULLY,
-      payload: {
+      data: {
         rolePermission,
       },
       statusCode: STATUS_CODES.CREATED,

@@ -24,6 +24,11 @@ export const authenticateSchema = AuthSchema.pick({
 
 export const jwtAccessTokenSchema = z.object({
   userId: z.string(),
+  permissions: z.array(z.string()),
+  tokenVersion: z.number(),
+  issuedAt: z.number(),
+  issuer: z.string(),
+  audience: z.string(),
 });
 
 export const jwtRefreshTokenSchema = z.object({
@@ -36,7 +41,7 @@ export const jwtActionTokenSchema = z.object({
 });
 
 export const sendOtpSchema = z.object({
-  payload: userSchema.shape.email,
+  data: userSchema.shape.email,
   eventType: z.enum(["signUp", "resetPassword", "sendEmailVerificationOTP"]),
 });
 

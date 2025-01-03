@@ -1,4 +1,4 @@
-import { OtpModel } from "./otp.modal";
+import { OtpModel } from "./otp.model";
 import { GetOtp, OtpSchema, SaveOtp } from "./otp.validation";
 
 export class OtpDAL {
