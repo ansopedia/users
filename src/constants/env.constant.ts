@@ -28,6 +28,8 @@ const envSchema = z.object({
   GOOGLE_CLIENT_SECRET: z.string().min(1, "GOOGLE_CLIENT_SECRET is required").readonly(),
   GOOGLE_CLIENT_URL: z.string().url().readonly(),
   CLIENT_URL: z.string().url().readonly(),
+  PUBLIC_KEY: z.string().min(1, "PUBLIC_KEY is required").readonly(),
+  PRIVATE_KEY: z.string().min(1, "PRIVATE_KEY is required").readonly(),
 });
 
 export const envConstants = envSchema.parse(process.env);

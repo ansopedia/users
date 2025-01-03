@@ -1,7 +1,4 @@
-import fs from "fs";
-import path from "path";
-
-import { ErrorTypeEnum } from "@/constants";
+import { ErrorTypeEnum, envConstants } from "@/constants";
 
 import logger from "./logger";
 
@@ -27,11 +24,13 @@ export class CryptoUtil {
     if (this.keyPair) return this.keyPair;
 
     try {
-      const keysDir = path.join(process.cwd(), "keys");
+      const publicKey = envConstants.PUBLIC_KEY;
+      const privateKey = envConstants.PRIVATE_KEY;
 
-      const publicKey = await fs.promises.readFile(path.join(keysDir, "public.pem"), "utf8");
-
-      const privateKey = await fs.promises.readFile(path.join(keysDir, "private.pem"), "utf8");
+      if (publicKey.length === 0 || privateKey.length === 0) {
+        logger.error("Public or private key not found in environment variables");
+        throw new Error(ErrorTypeEnum.enum.INTERNAL_SERVER_ERROR);
+      }
 
       this.keyPair = { publicKey, privateKey };
       return this.keyPair;
