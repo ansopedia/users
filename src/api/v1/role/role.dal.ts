@@ -22,6 +22,10 @@ export class RoleDAL {
     return await RoleModel.findOne({ name });
   }
 
+  static async getRoleById(roleId: string): Promise<Role | null> {
+    return await RoleModel.findById(roleId);
+  }
+
   static async softDeleteRole(roleId: string): Promise<Role | null> {
     return await RoleModel.findByIdAndUpdate(roleId, { isDeleted: true }, { new: true });
   }

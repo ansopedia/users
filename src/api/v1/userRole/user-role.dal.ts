@@ -14,4 +14,20 @@ export class UserRoleDAL {
   static async exists(userRole: UserRole) {
     return await UserRoleModel.exists(userRole);
   }
+
+  static async deleteUserRole(userId: string, roleId: string) {
+    return await UserRoleModel.findOneAndDelete({ userId, roleId });
+  }
+
+  static async deleteUserRoles(userId: string) {
+    return await UserRoleModel.deleteMany({ userId });
+  }
+
+  static async deleteRoleAssignments(roleId: string) {
+    return await UserRoleModel.deleteMany({ roleId });
+  }
+
+  static async getUsersWithRole(roleId: string) {
+    return await UserRoleModel.find({ roleId });
+  }
 }

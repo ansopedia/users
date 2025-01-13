@@ -11,3 +11,13 @@ export const userRoleSchema = z.object({
 });
 
 export type UserRole = z.infer<typeof userRoleSchema>;
+
+export const assignRolesSchema = z.object({
+  roleIds: z.array(
+    z.string().refine((value) => Types.ObjectId.isValid(value), {
+      message: "roleId must be a valid MongoDB ObjectId",
+    })
+  ),
+});
+
+export type AssignRoles = z.infer<typeof assignRolesSchema>;

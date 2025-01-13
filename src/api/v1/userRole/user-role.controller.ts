@@ -21,3 +21,31 @@ export const createUserRole = async (req: Request, res: Response, next: NextFunc
     next(error);
   }
 };
+
+export const assignUserRoles = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const userRoles = await UserRoleService.assignRoles(req.params.userId, req.body.roleIds);
+    sendResponse({
+      response: res,
+      message: success.USER_ROLES_ASSIGNED_SUCCESSFULLY,
+      data: { userRoles },
+      statusCode: STATUS_CODES.OK,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const removeUserRole = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const userRole = await UserRoleService.removeUserRole(req.params.userId, req.params.roleId);
+    sendResponse({
+      response: res,
+      message: success.USER_ROLE_DELETED_SUCCESSFULLY,
+      data: { userRole },
+      statusCode: STATUS_CODES.OK,
+    });
+  } catch (error) {
+    next(error);
+  }
+};

@@ -45,3 +45,14 @@ export const expectGetRolesSuccess = (response: Response): void => {
     },
   });
 };
+
+export const deleteRoleRequest = (roleId: string, authorizationHeader: string) => {
+  return supertest(app).delete(`/api/v1/roles/${roleId}`).set("Authorization", authorizationHeader);
+};
+
+export const expectDeleteRoleSuccess = (response: Response, roleData: any) => {
+  expect(response.statusCode).toBe(STATUS_CODES.OK);
+  expect(response.body.message).toBe(success.ROLE_DELETED_SUCCESSFULLY);
+  expect(response.body.data.role).toBeDefined();
+  expect(response.body.data.role.name).toBe(roleData.name);
+};

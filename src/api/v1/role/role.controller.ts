@@ -37,3 +37,19 @@ export const getRoles = async (_: Request, res: Response, next: NextFunction) =>
     next(error);
   }
 };
+
+export const deleteRole = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const role = await RoleService.deleteRole(req.params.roleId);
+    sendResponse({
+      response: res,
+      message: success.ROLE_DELETED_SUCCESSFULLY,
+      data: {
+        role,
+      },
+      statusCode: STATUS_CODES.OK,
+    });
+  } catch (error) {
+    next(error);
+  }
+};

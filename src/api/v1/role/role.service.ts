@@ -1,12 +1,14 @@
 import { ErrorTypeEnum } from "@/constants";
 
+import { validateObjectId } from "../../../utils/validation.util";
+import { UserRoleDAL } from "../userRole/user-role.dal";
 import { RoleDAL } from "./role.dal";
 import { RoleDto } from "./role.dto";
 import { createRole, createRoleSchema, getRole } from "./role.validation";
 
 export class RoleService {
-  static async createRole(userData: createRole): Promise<getRole> {
-    const validRoleData = createRoleSchema.parse(userData);
+  static async createRole(roleData: createRole): Promise<getRole> {
+    const validRoleData = createRoleSchema.parse(roleData);
 
     const isRoleExist = await RoleDAL.getRoleByName(validRoleData.name);
 
@@ -26,6 +28,34 @@ export class RoleService {
     const role = await RoleDAL.getRoleByName(roleName);
 
     if (!role) throw new Error(ErrorTypeEnum.enum.ROLE_NOT_FOUND);
+
+    return RoleDto(role).getRole();
+  }
+
+  static async deleteRole(roleId: string): Promise<getRole> {
+    validateObjectId(roleId);
+
+    const existingRole = await RoleDAL.getRoleById(roleId);
+    if (!existingRole) {
+      throw new Error(ErrorTypeEnum.enum.ROLE_NOT_FOUND);
+    }
+
+    if (existingRole.isSystemRole) {
+      throw new Error(ErrorTypeEnum.enum.SYSTEM_ROLE_CANNOT_BE_DELETED);
+    }
+
+    // Check if role is assigned to any users using UserRole
+    const usersWithRole = await UserRoleDAL.getUsersWithRole(roleId);
+    if (usersWithRole.length > 0) {
+      throw new Error(ErrorTypeEnum.enum.ROLE_IN_USE);
+    }
+
+    // Soft delete the role
+    const role = await RoleDAL.softDeleteRole(roleId);
+
+    if (!role) {
+      throw new Error(ErrorTypeEnum.enum.ROLE_NOT_FOUND);
+    }
 
     return RoleDto(role).getRole();
   }

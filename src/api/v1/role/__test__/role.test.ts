@@ -1,6 +1,7 @@
 import { ErrorTypeEnum, STATUS_CODES, defaultUsers, errorMap } from "@/constants";
 import {
   createRoleRequest,
+  deleteRoleRequest,
   expectCreateRoleSuccess,
   expectGetRolesSuccess,
   expectLoginSuccess,
@@ -128,5 +129,40 @@ describe("Role Service", () => {
   it("should get all roles", async () => {
     const response = await getRoles(authorizationHeader);
     expectGetRolesSuccess(response);
+  });
+
+  it("should not delete a system role", async () => {
+    const systemRole = {
+      ...VALID_ROLE,
+      name: "system-role",
+      isSystemRole: true,
+    };
+
+    const createResponse = await createRoleRequest(systemRole, authorizationHeader);
+    const roleId = createResponse.body.data.role.id;
+
+    const response = await deleteRoleRequest(roleId, authorizationHeader);
+
+    expect(response.statusCode).toBe(STATUS_CODES.FORBIDDEN);
+    expect(response.body.code).toBe("SYSTEM_ROLE_CANNOT_BE_DELETED");
+  });
+
+  it("should successfully delete a non-system role", async () => {
+    const createResponse = await createRoleRequest(VALID_ROLE, authorizationHeader);
+    const roleId = createResponse.body.data.role.id;
+
+    const response = await deleteRoleRequest(roleId, authorizationHeader);
+
+    expect(response.statusCode).toBe(STATUS_CODES.OK);
+    expect(response.body.message).toBe(success.ROLE_DELETED_SUCCESSFULLY);
+    expect(response.body.data.role).toBeDefined();
+  });
+
+  it("should return not found for non-existent role", async () => {
+    const nonExistentId = new Types.ObjectId().toString();
+    const response = await deleteRoleRequest(nonExistentId, authorizationHeader);
+
+    expect(response.statusCode).toBe(STATUS_CODES.NOT_FOUND);
+    expect(response.body.code).toBe("ROLE_NOT_FOUND");
   });
 });

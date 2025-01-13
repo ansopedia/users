@@ -1,6 +1,12 @@
 import { z } from "zod";
 
+
+
 import { STATUS_CODES } from "./status-code.constant";
+
+
+
+
 
 const errorType = [
   "VALIDATION_ERROR",
@@ -16,6 +22,7 @@ const errorType = [
   "PERMISSION_NOT_FOUND",
   "ROLE_PERMISSION_ALREADY_EXISTS",
   "USER_ROLE_ALREADY_EXISTS",
+  "USER_ROLE_NOT_FOUND",
   "INVALID_CREDENTIALS",
   "UNAUTHORIZED",
   "FORBIDDEN",
@@ -36,6 +43,8 @@ const errorType = [
   "TOO_MANY_REQUESTS",
   "TOKEN_NOT_ACTIVE",
   "INVALID_TOKEN_AUDIENCE",
+  "SYSTEM_ROLE_CANNOT_BE_DELETED",
+  "ROLE_IN_USE",
 ] as const;
 
 export const ErrorTypeEnum = z.enum(errorType);
@@ -70,6 +79,10 @@ export const errorMap = {
       code: "duplicate_username",
       message: "Username already exists. Please choose a different username.",
     },
+  },
+  [ErrorTypeEnum.enum.USER_ROLE_NOT_FOUND]: {
+    httpStatusCode: STATUS_CODES.NOT_FOUND,
+    body: { code: "user_role_not_found", message: "User role not found" },
   },
   [ErrorTypeEnum.enum.ROLE_ALREADY_EXISTS]: {
     httpStatusCode: STATUS_CODES.CONFLICT,
@@ -207,6 +220,20 @@ export const errorMap = {
   [ErrorTypeEnum.enum.INVALID_TOKEN_AUDIENCE]: {
     httpStatusCode: STATUS_CODES.UNAUTHORIZED,
     body: { code: "invalid_token_audience", message: "Invalid token audience" },
+  },
+  [ErrorTypeEnum.enum.SYSTEM_ROLE_CANNOT_BE_DELETED]: {
+    httpStatusCode: STATUS_CODES.FORBIDDEN,
+    body: {
+      code: "system_role_cannot_be_deleted",
+      message: "System roles cannot be deleted",
+    },
+  },
+  [ErrorTypeEnum.enum.ROLE_IN_USE]: {
+    httpStatusCode: STATUS_CODES.CONFLICT,
+    body: {
+      code: "role_in_use",
+      message: "Role is currently assigned to users and cannot be deleted",
+    },
   },
 };
 
