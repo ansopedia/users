@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enhanced Google OAuth profile data storage (#66)
   - Added name fields to profile schema (name, givenName, familyName)
   - Store Google user's display name and name components
-  - Improved profile creation during Google sign-in
+  - Update profile dto to include name fields
 
 ## [1.0.1] - 2025-01-03
 
