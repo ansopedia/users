@@ -28,6 +28,12 @@ const RoleSchema: Schema<Role> = new Schema(
       type: Boolean,
       default: false,
     },
+    
+    canBeDeleted:{
+      type: Boolean,
+      default: false,
+    },
+
     createdBy: {
       type: String,
       required: true,
