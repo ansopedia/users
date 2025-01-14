@@ -14,6 +14,7 @@ import { notificationService } from "@/services";
 import { GoogleUser } from "@/types/passport-google";
 import { comparePassword, generateAccessToken, generateRefreshToken, validateObjectId } from "@/utils";
 
+import { ProfileService } from "../profile";
 import { AuthDAL } from "./auth.dal";
 import { Auth, AuthToken, Login, loginSchema } from "./auth.validation";
 
@@ -46,15 +47,12 @@ export class AuthService {
   }
 
   public static async signInWithGoogle(googleUser: GoogleUser): Promise<AuthToken> {
-    const { id: googleId, emails, name } = googleUser;
-    const [{ value, verified }] = emails;
+    const { id: googleId, emails, name, photos, displayName } = googleUser;
+    const [{ value: email, verified: isEmailVerified }] = emails;
 
-    if (value === null || value === undefined) {
+    if (!email) {
       throw new Error("Email not provided by Google authentication");
     }
-
-    const email = value;
-    const isEmailVerified = verified;
 
     // Check if the user exists by Google ID
     let userRecord = await UserService.getUserByGoogleId(googleId);
@@ -69,12 +67,23 @@ export class AuthService {
           email,
         });
       } else {
-        const username = await UserService.generateUniqueUsername(name.givenName.replace(" ", "-"));
+        // Create new user
+        const username = await UserService.generateUniqueUsername(name.givenName.toLowerCase().replace(/\s+/g, "-"));
+
         userRecord = await UserService.createUser({
           email,
           username,
           googleId,
           isEmailVerified,
+        });
+
+        // Create profile with Google data
+        await new ProfileService().upSertProfileData({
+          userId: userRecord.id,
+          name: displayName,
+          givenName: name.givenName,
+          familyName: name.familyName,
+          avatar: photos?.[0]?.value,
         });
       }
     }
