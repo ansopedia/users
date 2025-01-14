@@ -35,7 +35,7 @@ export class CryptoUtil {
       this.keyPair = { publicKey, privateKey };
       return this.keyPair;
     } catch (error) {
-      logger.error("Error loading keys:", error);
+      logger.error(`Error loading keys: ${error}`);
       throw new Error(ErrorTypeEnum.enum.INTERNAL_SERVER_ERROR);
     }
   }

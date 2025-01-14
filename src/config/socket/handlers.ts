@@ -14,7 +14,7 @@ export const setupEventHandlers = (socket: CustomSocket) => {
     },
 
     handleError: (error: Error) => {
-      logger.error(`Socket error for user ${userId}:`, error);
+      logger.error(`Socket error for user ${userId}; error: ${error}`);
     },
   };
 
