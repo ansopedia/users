@@ -48,7 +48,7 @@ export class TokenService {
       await this.tokenDAL.updateToken(storedToken.id, { isUsed: true });
       return verifiedToken;
     } catch (error) {
-      logger.error("Action token verification error:", error);
+      logger.error(`Action token verification error: ${error}`);
       throw error;
     }
   }

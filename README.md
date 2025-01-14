@@ -96,7 +96,7 @@ For JWT token signing and verification, this service requires RSA key pairs.
 2. Run the key generation script:
 
 ```bash
-npm run generate-keys
+pnpm generate-keys
 ```
 
 ### Production Setup

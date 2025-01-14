@@ -42,7 +42,7 @@ export const generateAccessToken = async (payload: { userId: string; permissions
       issuer: CURRENT_SERVICE,
     });
   } catch (error) {
-    logger.error("Access token generation error:", error);
+    logger.error(`Access token generation error: ${error}`);
     throw new Error(ErrorTypeEnum.enum.INTERNAL_SERVER_ERROR);
   }
 };
