@@ -88,3 +88,19 @@ export const restoreUser = async (req: Request, res: Response, next: NextFunctio
     next(error);
   }
 };
+
+export const checkUsernameAvailability = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const isAvailable = await UserService.checkUsernameAvailability(req.params.username);
+    sendResponse({
+      response: res,
+      message: isAvailable ? success.USERNAME_AVAILABLE : success.USERNAME_UNAVAILABLE,
+      data: {
+        isAvailable,
+      },
+      statusCode: STATUS_CODES.OK,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
