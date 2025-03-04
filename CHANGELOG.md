@@ -5,10 +5,13 @@ All notable changes to the User Service will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased] - 2025-01-15
+## [Unreleased] - 2025-02-14
 
 ### Added
 
+- Added username availability check endpoint (#103)
+  - New GET `/users/check-username/:username` endpoint
+  - Comprehensive test coverage for validation cases
 - Enhanced Google OAuth profile data storage (#66)
   - Added name fields to profile schema (name, givenName, familyName)
   - Store Google user's display name and name components
